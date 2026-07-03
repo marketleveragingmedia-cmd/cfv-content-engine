@@ -53,19 +53,25 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
           </Link>
           
           <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold mb-2 text-green-600">
                 {session.finalTitle || session.workingTitle || session.theme}
               </h1>
-              <p className="text-green-500 font-semibold">{session.sessionId}</p>
+              <p className="text-gray-600 font-semibold text-sm">{session.sessionId} • {session.category || 'Uncategorized'}</p>
             </div>
             
-            <div className="flex gap-3">
-              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                session.status === 'published' ? 'bg-green-500/20 text-green-500' :
-                session.status === 'ready-to-publish' ? 'bg-blue-500/20 text-blue-500' :
-                session.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-500' :
-                'bg-gray-700 text-gray-300'
+            <div className="flex gap-2 items-start">
+              <a
+                href={`/api/session/${session.id}/export?format=pdf`}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition text-sm whitespace-nowrap"
+              >
+                📄 PDF
+              </a>
+              <span className={`px-3 py-1 rounded-lg text-sm font-semibold whitespace-nowrap ${
+                session.status === 'published' ? 'bg-green-100 text-green-700' :
+                session.status === 'ready-to-publish' ? 'bg-blue-100 text-blue-700' :
+                session.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' :
+                'bg-gray-200 text-gray-700'
               }`}>
                 {session.status.replace(/-/g, ' ').toUpperCase()}
               </span>
