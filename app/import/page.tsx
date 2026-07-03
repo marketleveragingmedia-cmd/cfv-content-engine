@@ -2,177 +2,129 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 export default function ImportPage() {
   const [uploading, setUploading] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [status, setStatus] = useState('')
   const [result, setResult] = useState<any>(null)
-  const router = useRouter()
-  
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleUpload(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setUploading(true)
-    setProgress(0)
-    setStatus('Uploading ZIP file...')
+    setError(null)
     setResult(null)
+
+    const formData = new FormData(e.currentTarget)
     
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      
-      setProgress(30)
-      setStatus('Processing package...')
-      
-      const response = await fetch('/api/import', {
+      const response = await fetch('/api/import-zip', {
         method: 'POST',
         body: formData
       })
       
-      setProgress(90)
-      
-      if (!response.ok) {
-        throw new Error('Import failed')
-      }
-      
       const data = await response.json()
       
-      setProgress(100)
-      setStatus('Import complete!')
-      setResult(data)
-      
-    } catch (error) {
-      setStatus('Import failed')
-      setResult({ error: 'Failed to import package' })
+      if (data.error) {
+        setError(data.error)
+      } else {
+        setResult(data.result)
+      }
+    } catch (err: any) {
+      setError(err.message)
     } finally {
       setUploading(false)
     }
   }
-  
+
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-[#fdfbf7] text-gray-900">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-green-500 mb-2">
-            📥 Import Vision Session Package
-          </h1>
-          <p className="text-gray-400">
-            Upload a Cash Flow Visionaries Vision Session ZIP package
-          </p>
+          <h1 className="text-4xl font-bold text-green-600 mb-2">📥 Import Vision Session Package</h1>
+          <p className="text-gray-600">Upload a Vision Session ZIP file to import all content and assets</p>
         </header>
-        
-        {/* Navigation */}
-        <nav className="flex gap-3 mb-8 border-b border-gray-800 pb-4">
-          <Link 
-            href="/" 
-            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-semibold transition"
-          >
+
+        <nav className="flex gap-3 mb-8 border-b border-gray-300 pb-4">
+          <Link href="/" className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg font-semibold transition">
             📊 Dashboard
           </Link>
-          <Link 
-            href="/import" 
-            className="px-4 py-2 bg-green-500 text-white rounded-lg font-semibold"
-          >
+          <Link href="/import" className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold">
             📥 Import Package
           </Link>
-          <Link 
-            href="/sessions" 
-            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-semibold transition"
-          >
+          <Link href="/sessions" className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg font-semibold transition">
             📁 All Sessions
           </Link>
         </nav>
-        
-        {/* Upload Area */}
-        {!result && (
-          <div 
-            onClick={() => document.getElementById('fileInput')?.click()}
-            className="border-2 border-dashed border-gray-700 rounded-xl p-16 text-center bg-gray-900 hover:border-green-500 transition cursor-pointer"
-          >
-            <input 
-              id="fileInput"
-              type="file" 
-              accept=".zip"
-              onChange={handleFileUpload}
-              className="hidden"
-              disabled={uploading}
-            />
-            <div className="text-6xl mb-4">📦</div>
-            <h3 className="text-xl font-bold mb-2">Drop ZIP file or click to upload</h3>
-            <p className="text-gray-400">Supported: Cash Flow Visionaries Vision Session packages (.zip)</p>
-          </div>
-        )}
-        
-        {/* Progress */}
-        {uploading && (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-bold mb-4">Import Progress</h3>
-            <div className="bg-gray-950 h-3 rounded-full overflow-hidden mb-3">
-              <div 
-                className="bg-green-500 h-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
+
+        <div className="bg-white border border-gray-300 rounded-xl p-8 shadow-sm">
+          <form onSubmit={handleUpload} className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold mb-3 text-gray-700">
+                Select Vision Session ZIP File
+              </label>
+              <input
+                type="file"
+                name="file"
+                accept=".zip"
+                required
+                disabled={uploading}
+                className="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200 file:cursor-pointer border border-gray-300 rounded-lg cursor-pointer disabled:opacity-50"
               />
+              <p className="mt-2 text-xs text-gray-500">
+                ZIP should contain manifest.json and organized content folders
+              </p>
             </div>
-            <p className="text-gray-400 text-sm">{status}</p>
-          </div>
-        )}
-        
-        {/* Result */}
-        {result && !result.error && (
-          <div className="bg-gray-900 border border-green-500 rounded-xl p-6">
-            <h3 className="text-xl font-bold text-green-500 mb-3">✓ Import Successful</h3>
-            <p className="text-gray-400 mb-4">Session {result.sessionId} has been created</p>
-            
-            <div className="bg-gray-950 rounded-lg p-4 mb-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <span className="text-gray-500">Assets Imported:</span>
-                  <span className="ml-2 font-semibold">{result.assetsImported || 0}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Status:</span>
-                  <span className="ml-2 font-semibold capitalize">{result.status}</span>
-                </div>
+
+            <button
+              type="submit"
+              disabled={uploading}
+              className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg font-semibold transition"
+            >
+              {uploading ? 'Importing...' : 'Import Package'}
+            </button>
+          </form>
+
+          {error && (
+            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <h3 className="font-semibold text-red-700 mb-2">Import Error</h3>
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
+          {result && (
+            <div className="mt-6 p-6 bg-green-50 border border-green-200 rounded-lg">
+              <h3 className="font-semibold text-green-700 mb-3 text-lg">✅ Import Successful!</h3>
+              <div className="space-y-2 text-sm text-gray-700 mb-4">
+                <p><strong>Session ID:</strong> {result.sessionId}</p>
+                <p><strong>Assets Imported:</strong> {result.assetsImported}</p>
+                <p><strong>Manifest Found:</strong> {result.manifestFound ? 'Yes' : 'No'}</p>
+                {result.errors?.length > 0 && (
+                  <p className="text-yellow-600"><strong>Warnings:</strong> {result.errors.length}</p>
+                )}
               </div>
-            </div>
-            
-            <div className="flex gap-3">
               <Link
                 href={`/session/${result.sessionId}`}
-                className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition"
+                className="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition"
               >
-                Open Session
-              </Link>
-              <Link
-                href="/"
-                className="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg font-semibold transition"
-              >
-                View Dashboard
+                View Session →
               </Link>
             </div>
+          )}
+        </div>
+
+        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
+          <h3 className="font-semibold text-blue-900 mb-3">📦 Package Structure</h3>
+          <div className="text-sm text-gray-700 space-y-1 font-mono">
+            <p>├── 00_Manifest/manifest.json</p>
+            <p>├── 01_Overview/</p>
+            <p>├── 02_Transcript/</p>
+            <p>├── 03_Core_Message/</p>
+            <p>├── 04_YouTube_Long_Form/</p>
+            <p>├── 05_Shorts/</p>
+            <p>├── 11_NotebookLM/</p>
+            <p>└── 12_Visual_Assets/</p>
           </div>
-        )}
-        
-        {/* Error */}
-        {result?.error && (
-          <div className="bg-gray-900 border border-red-500 rounded-xl p-6">
-            <h3 className="text-xl font-bold text-red-500 mb-3">✗ Import Failed</h3>
-            <p className="text-gray-400">{result.error}</p>
-            <button
-              onClick={() => {
-                setResult(null)
-                setProgress(0)
-              }}
-              className="mt-4 px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg font-semibold transition"
-            >
-              Try Again
-            </button>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )

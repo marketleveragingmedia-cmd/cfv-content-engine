@@ -79,14 +79,36 @@ export async function processVisionSessionZip(
       }
     }
 
-    // Generate session ID
-    const lastSession = await prisma.visionSession.findFirst({
-      orderBy: { sessionId: 'desc' }
-    })
-    const nextNumber = lastSession 
-      ? parseInt(lastSession.sessionId.split('-')[2]) + 1 
-      : 1
-    const sessionId = `CFV-VS-${String(nextNumber).padStart(5, '0')}`
+    // Use session ID from manifest or ZIP filename, or generate new
+    let sessionId = manifest?.sessionId
+    
+    if (!sessionId) {
+      // Try to extract from filename (e.g., CFV_VS_00001_...)
+      const match = zipFilename.match(/CFV[_-]VS[_-](\d+)/i)
+      if (match) {
+        sessionId = `CFV-VS-${match[1]}`
+      }
+    }
+    
+    // Check if session ID already exists
+    if (sessionId) {
+      const existing = await prisma.visionSession.findUnique({ where: { sessionId } })
+      if (existing) {
+        sessionId = null // Force generation of new ID
+      }
+    }
+    
+    // Generate new session ID if needed
+    if (!sessionId) {
+      const lastSession = await prisma.visionSession.findFirst({
+        orderBy: { sessionId: 'desc' }
+      })
+      const nextNumber = lastSession 
+        ? parseInt(lastSession.sessionId.split('-')[2]) + 1 
+        : 1
+      sessionId = `CFV-VS-${String(nextNumber).padStart(5, '0')}`
+    }
+    
     result.sessionId = sessionId
 
     // Create Vision Session
