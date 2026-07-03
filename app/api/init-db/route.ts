@@ -22,7 +22,10 @@ export async function GET() {
     try { await prisma.$executeRawUnsafe(`ALTER TABLE "ChecklistItem" ADD COLUMN IF NOT EXISTS "dueDate" TIMESTAMP(3)`) } catch(e){}
     try { await prisma.$executeRawUnsafe(`ALTER TABLE "ChecklistItem" ADD COLUMN IF NOT EXISTS "liveUrl" TEXT`) } catch(e){}
     
-    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "PublishingMatrixItem" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "asset" TEXT NOT NULL, "platform" TEXT NOT NULL, "status" TEXT NOT NULL DEFAULT 'Not Scheduled', "scheduledDate" TIMESTAMP(3), "publishedDate" TIMESTAMP(3), "liveUrl" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "PublishingMatrixItem_pkey" PRIMARY KEY ("id"))`)
+    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "PublishingMatrixItem" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "asset" TEXT NOT NULL, "platform" TEXT NOT NULL, "status" TEXT NOT NULL DEFAULT 'Not Scheduled', "scheduledDate" TIMESTAMP(3), "publishedDate" TIMESTAMP(3), "liveUrl" TEXT, "notes" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "PublishingMatrixItem_pkey" PRIMARY KEY ("id"))`)
+    
+    // Add notes column if missing
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "PublishingMatrixItem" ADD COLUMN IF NOT EXISTS "notes" TEXT`) } catch(e){}
     
     await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "ImportLog" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "importType" TEXT NOT NULL, "zipFilename" TEXT NOT NULL, "zipPath" TEXT NOT NULL, "manifestFound" BOOLEAN NOT NULL DEFAULT false, "manifestData" TEXT, "assetsImported" INTEGER NOT NULL DEFAULT 0, "assetsMissing" INTEGER NOT NULL DEFAULT 0, "assetsUnclassified" INTEGER NOT NULL DEFAULT 0, "errors" TEXT, "warnings" TEXT, "importedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "importedBy" TEXT DEFAULT 'system', CONSTRAINT "ImportLog_pkey" PRIMARY KEY ("id"))`)
     
