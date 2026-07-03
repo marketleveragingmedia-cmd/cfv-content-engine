@@ -41,33 +41,37 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   }
   
   return (
-    <div className="min-h-screen bg-[#fdfbf7] text-gray-900">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-6">
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Header Card */}
+        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
           <Link 
             href="/sessions"
-            className="text-green-600 hover:text-green-700 mb-4 inline-block font-semibold"
+            className="inline-block mb-6 font-semibold hover:underline"
+            style={{color: 'var(--green-primary)'}}
           >
             ← Back to All Sessions
           </Link>
           
-          <div className="flex items-start justify-between mb-4">
+          <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2 text-green-600">
+              <h1 className="text-3xl font-bold mb-2" style={{color: 'var(--green-primary)'}}>
                 {session.finalTitle || session.workingTitle || session.theme}
               </h1>
-              <p className="text-gray-600 font-semibold text-sm">{session.sessionId} • {session.category || 'Uncategorized'}</p>
+              <p className="text-base" style={{color: 'var(--text-secondary)'}}>
+                <span className="font-semibold">{session.sessionId}</span> • {session.category || 'Mindset / Movement Foundation'}
+              </p>
             </div>
             
-            <div className="flex gap-2 items-start">
+            <div className="flex gap-3 items-start">
               <a
                 href={`/api/session/${session.id}/export?format=pdf`}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition text-sm whitespace-nowrap"
+                className="px-5 py-2.5 text-white rounded-lg font-semibold transition shadow-sm hover:shadow-md"
+                style={{background: 'linear-gradient(135deg, #2D8659 0%, #1F7A47 100%)'}}
               >
-                📄 PDF
+                📥 Download PDF
               </a>
-              <span className={`px-3 py-1 rounded-lg text-sm font-semibold whitespace-nowrap ${
+              <span className={`px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap ${
                 session.status === 'published' ? 'bg-green-100 text-green-700' :
                 session.status === 'ready-to-publish' ? 'bg-blue-100 text-blue-700' :
                 session.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' :
@@ -79,22 +83,18 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
           </div>
           
           {/* Meta Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <MetaCard label="Category" value={session.category || 'N/A'} />
-            <MetaCard label="Stage" value={session.founderPathwayStage || 'N/A'} />
-            <MetaCard label="Required Complete" value={`${session.completion.required}%`} />
-            <MetaCard label="Overall Complete" value={`${session.completion.overall}%`} />
-          </div>
-          
-          {/* Progress Bars */}
-          <div className="space-y-3">
-            <ProgressBar label="Required Tasks" percent={session.completion.required} />
-            <ProgressBar label="All Tasks" percent={session.completion.overall} color="blue" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <MetaCard label="Category" value={session.category || 'Mindset / Movement'} />
+            <MetaCard label="Pathway Stage" value={session.founderPathwayStage || 'Foundation'} />
+            <MetaCard label="Required Tasks" value={`${session.completion.required}%`} />
+            <MetaCard label="Overall Progress" value={`${session.completion.overall}%`} />
           </div>
         </div>
         
-        {/* Session Tabs */}
-        <SessionTabs session={session} />
+        {/* Content Card */}
+        <div className="bg-white rounded-xl shadow-md p-8">
+          <SessionTabs session={session} />
+        </div>
       </div>
     </div>
   )
@@ -102,28 +102,9 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
 
 function MetaCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-3">
-      <div className="text-xs text-gray-500 mb-1">{label}</div>
-      <div className="font-semibold">{value}</div>
-    </div>
-  )
-}
-
-function ProgressBar({ label, percent, color = 'green' }: { label: string; percent: number; color?: string }) {
-  const colorClass = color === 'green' ? 'bg-green-500' : 'bg-blue-500'
-  
-  return (
-    <div>
-      <div className="flex justify-between text-sm mb-1">
-        <span className="text-gray-400">{label}</span>
-        <span className="font-semibold">{percent}%</span>
-      </div>
-      <div className="bg-gray-900 h-2 rounded-full overflow-hidden">
-        <div 
-          className={`${colorClass} h-full transition-all`}
-          style={{ width: `${percent}%` }}
-        />
-      </div>
+    <div className="border rounded-lg p-4" style={{borderColor: 'var(--border-color)'}}>
+      <div className="text-sm mb-1" style={{color: 'var(--text-secondary)'}}>{label}</div>
+      <div className="text-xl font-bold" style={{color: 'var(--text-primary)'}}>{value}</div>
     </div>
   )
 }
