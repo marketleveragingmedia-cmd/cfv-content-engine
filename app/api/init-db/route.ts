@@ -18,7 +18,10 @@ export async function GET() {
     
     await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "PublishingMatrixItem" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "asset" TEXT NOT NULL, "platform" TEXT NOT NULL, "status" TEXT NOT NULL DEFAULT 'Not Scheduled', "scheduledDate" TIMESTAMP(3), "publishedDate" TIMESTAMP(3), "liveUrl" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "PublishingMatrixItem_pkey" PRIMARY KEY ("id"))`)
     
-    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "ImportLog" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "importType" TEXT NOT NULL, "zipFilename" TEXT NOT NULL, "zipPath" TEXT NOT NULL, "manifestFound" BOOLEAN NOT NULL DEFAULT false, "manifestData" TEXT, "assetsImported" INTEGER NOT NULL DEFAULT 0, "assetsMissing" INTEGER NOT NULL DEFAULT 0, "assetsUnclassified" INTEGER NOT NULL DEFAULT 0, "errors" TEXT, "importedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT "ImportLog_pkey" PRIMARY KEY ("id"))`)
+    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "ImportLog" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "importType" TEXT NOT NULL, "zipFilename" TEXT NOT NULL, "zipPath" TEXT NOT NULL, "manifestFound" BOOLEAN NOT NULL DEFAULT false, "manifestData" TEXT, "assetsImported" INTEGER NOT NULL DEFAULT 0, "assetsMissing" INTEGER NOT NULL DEFAULT 0, "assetsUnclassified" INTEGER NOT NULL DEFAULT 0, "errors" TEXT, "warnings" TEXT, "importedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "importedBy" TEXT DEFAULT 'system', CONSTRAINT "ImportLog_pkey" PRIMARY KEY ("id"))`)
+    
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "ImportLog" ADD COLUMN IF NOT EXISTS "warnings" TEXT`) } catch(e){}
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "ImportLog" ADD COLUMN IF NOT EXISTS "importedBy" TEXT DEFAULT 'system'`) } catch(e){}
     
     await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "VisionSession_sessionId_key" ON "VisionSession"("sessionId")`)
     await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "VisionSession_status_idx" ON "VisionSession"("status")`)
