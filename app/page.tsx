@@ -132,17 +132,17 @@ export default async function Dashboard() {
 
 function StatCard({ label, value, color = 'green' }: { label: string; value: number; color?: string }) {
   const colorClasses = {
-    green: 'text-green-500',
-    yellow: 'text-yellow-500',
-    blue: 'text-blue-500'
+    green: 'text-green-600',
+    yellow: 'text-yellow-600',
+    blue: 'text-blue-600'
   }
   
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+    <div className="bg-white border border-gray-300 rounded-xl p-5 shadow-sm">
       <div className={`text-3xl font-bold mb-2 ${colorClasses[color as keyof typeof colorClasses]}`}>
         {value}
       </div>
-      <div className="text-gray-400 text-sm">{label}</div>
+      <div className="text-gray-600 text-sm">{label}</div>
     </div>
   )
 }
