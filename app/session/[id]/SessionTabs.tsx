@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 const TABS = [
+  { id: 'checklist', label: 'Publishing Checklist', icon: '✅' },
   { id: 'overview', label: 'Overview', icon: '📋' },
   { id: 'transcript', label: 'Transcript', icon: '📝' },
   { id: 'core-message', label: 'Core Message', icon: '💡' },
@@ -15,37 +16,38 @@ const TABS = [
   { id: 'founder-pathway', label: 'Founder Pathway', icon: '🎯' },
   { id: 'notebooklm', label: 'NotebookLM', icon: '📚' },
   { id: 'visual-assets', label: 'Visual Assets', icon: '🖼️' },
-  { id: 'checklist', label: 'Publishing Checklist', icon: '✅' },
   { id: 'links', label: 'Links & Versions', icon: '🔗' },
   { id: 'audit', label: 'Import / Audit Log', icon: '📊' }
 ]
 
 export default function SessionTabs({ session }: { session: any }) {
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState('checklist')
   
   const activeTabData = TABS.find(t => t.id === activeTab)
   
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="flex overflow-x-auto gap-2 mb-6 pb-2 border-b border-gray-800">
-        {TABS.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition ${
-              activeTab === tab.id
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-900 text-gray-400 hover:bg-gray-800'
-            }`}
-          >
-            {tab.icon} {tab.label}
-          </button>
-        ))}
+      <div className="bg-white rounded-lg shadow-sm mb-6 p-2">
+        <div className="flex overflow-x-auto gap-1">
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 rounded-md font-semibold whitespace-nowrap transition text-sm ${
+                activeTab === tab.id
+                  ? 'bg-green-600 text-white'
+                  : 'text-green-600 hover:bg-green-50'
+              }`}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
       
       {/* Tab Content */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 min-h-[400px]">
+      <div className="bg-white rounded-lg shadow-sm p-6 min-h-[400px]">
         {activeTab === 'overview' && <OverviewTab session={session} />}
         {activeTab === 'transcript' && <AssetTab session={session} tab="Transcript" />}
         {activeTab === 'core-message' && <AssetTab session={session} tab="Core Message" />}

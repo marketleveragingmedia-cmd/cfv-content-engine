@@ -41,15 +41,15 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   }
   
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-[#fdfbf7] text-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-6">
           <Link 
-            href="/"
-            className="text-green-500 hover:text-green-400 mb-4 inline-block"
+            href="/sessions"
+            className="text-green-600 hover:text-green-700 mb-4 inline-block font-semibold"
           >
-            ← Back to Dashboard
+            ← Back to All Sessions
           </Link>
           
           <div className="flex items-start justify-between mb-4">
