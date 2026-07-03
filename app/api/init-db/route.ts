@@ -14,10 +14,13 @@ export async function GET() {
     try { await prisma.$executeRawUnsafe(`ALTER TABLE "Asset" ADD COLUMN IF NOT EXISTS "notes" TEXT`) } catch(e){}
     try { await prisma.$executeRawUnsafe(`ALTER TABLE "Asset" ADD COLUMN IF NOT EXISTS "previousVersionId" TEXT`) } catch(e){}
     
-    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "ChecklistItem" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "category" TEXT NOT NULL, "title" TEXT NOT NULL, "description" TEXT, "required" BOOLEAN NOT NULL DEFAULT false, "conditional" BOOLEAN NOT NULL DEFAULT false, "orderIndex" INTEGER NOT NULL, "completed" BOOLEAN NOT NULL DEFAULT false, "completedAt" TIMESTAMP(3), "status" TEXT NOT NULL DEFAULT 'Not Started', "notes" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "ChecklistItem_pkey" PRIMARY KEY ("id"))`)
+    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "ChecklistItem" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "category" TEXT NOT NULL, "title" TEXT NOT NULL, "description" TEXT, "orderIndex" INTEGER NOT NULL, "required" BOOLEAN NOT NULL DEFAULT true, "conditional" BOOLEAN NOT NULL DEFAULT false, "status" TEXT NOT NULL DEFAULT 'Not Started', "completed" BOOLEAN NOT NULL DEFAULT false, "completedAt" TIMESTAMP(3), "assignedTo" TEXT, "dueDate" TIMESTAMP(3), "notes" TEXT, "liveUrl" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "ChecklistItem_pkey" PRIMARY KEY ("id"))`)
     
-    // Add description column if missing
+    // Add missing columns if needed
     try { await prisma.$executeRawUnsafe(`ALTER TABLE "ChecklistItem" ADD COLUMN IF NOT EXISTS "description" TEXT`) } catch(e){}
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "ChecklistItem" ADD COLUMN IF NOT EXISTS "assignedTo" TEXT`) } catch(e){}
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "ChecklistItem" ADD COLUMN IF NOT EXISTS "dueDate" TIMESTAMP(3)`) } catch(e){}
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "ChecklistItem" ADD COLUMN IF NOT EXISTS "liveUrl" TEXT`) } catch(e){}
     
     await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "PublishingMatrixItem" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "asset" TEXT NOT NULL, "platform" TEXT NOT NULL, "status" TEXT NOT NULL DEFAULT 'Not Scheduled', "scheduledDate" TIMESTAMP(3), "publishedDate" TIMESTAMP(3), "liveUrl" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "PublishingMatrixItem_pkey" PRIMARY KEY ("id"))`)
     
