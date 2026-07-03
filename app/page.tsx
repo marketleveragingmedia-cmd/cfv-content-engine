@@ -4,23 +4,27 @@ import { prisma } from '@/lib/prisma'
 export const dynamic = 'force-dynamic'
 
 async function getDashboardStats() {
-  const total = await prisma.visionSession.count()
-  const inProgress = await prisma.visionSession.count({ where: { status: 'in-progress' } })
-  const readyToPublish = await prisma.visionSession.count({ where: { status: 'ready-to-publish' } })
-  const published = await prisma.visionSession.count({ where: { status: 'published' } })
-  
-  const recentSessions = await prisma.visionSession.findMany({
-    take: 6,
-    orderBy: { updatedAt: 'desc' },
-    include: {
-      checklistItems: true,
-      _count: {
-        select: { assets: true }
+  try {
+    const total = await prisma.visionSession.count()
+    const inProgress = await prisma.visionSession.count({ where: { status: 'in-progress' } })
+    const readyToPublish = await prisma.visionSession.count({ where: { status: 'ready-to-publish' } })
+    const published = await prisma.visionSession.count({ where: { status: 'published' } })
+    
+    const recentSessions = await prisma.visionSession.findMany({
+      take: 6,
+      orderBy: { updatedAt: 'desc' },
+      include: {
+        checklistItems: true,
+        _count: {
+          select: { assets: true }
+        }
       }
-    }
-  })
-  
-  return { total, inProgress, readyToPublish, published, recentSessions }
+    })
+    
+    return { total, inProgress, readyToPublish, published, recentSessions }
+  } catch (error) {
+    return { total: 0, inProgress: 0, readyToPublish: 0, published: 0, recentSessions: [] }
+  }
 }
 
 function calculateCompletion(checklistItems: any[]) {
