@@ -1,0 +1,170 @@
+// CFV Content Engine Database Schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Vision Session - Main content record
+model VisionSession {
+  id                    String   @id @default(cuid())
+  sessionId             String   @unique // CFV-VS-00001
+  workingTitle          String?
+  finalTitle            String?
+  theme                 String
+  category              String?
+  summary               String?  @db.Text
+  creator               String   @default("MzSamantha")
+  brand                 String   @default("Cash Flow Visionaries")
+  founderPathwayStage   String?
+  primaryCTA            String?  @db.Text
+  status                String   @default("draft")
+  packageVersion        String   @default("1.0")
+  
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  lastImportedAt        DateTime?
+  
+  // Original ZIP preservation
+  originalZipPath       String?
+  originalZipFilename   String?
+  
+  // Relationships
+  assets                Asset[]
+  checklistItems        ChecklistItem[]
+  publishingMatrix      PublishingMatrixItem[]
+  imports               ImportLog[]
+  
+  @@index([sessionId])
+  @@index([status])
+  @@index([founderPathwayStage])
+}
+
+// Asset - Text content, images, documents
+model Asset {
+  id                String   @id @default(cuid())
+  sessionId         String
+  session           VisionSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  // Asset identification
+  tab               String   // Overview, Transcript, Core Message, etc.
+  assetType         String   // clean_transcript, youtube_long_form, image, etc.
+  title             String
+  filename          String?
+  
+  // Content
+  content           String?  @db.Text
+  filePath          String?  // For files
+  mimeType          String?
+  
+  // Version control
+  version           Int      @default(1)
+  approved          Boolean  @default(false)
+  approvedAt        DateTime?
+  approvedBy        String?
+  
+  // Metadata
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Version history
+  previousVersionId String?
+  
+  @@index([sessionId, tab])
+  @@index([sessionId, assetType])
+}
+
+// Checklist Item - Interactive publishing checklist
+model ChecklistItem {
+  id                String   @id @default(cuid())
+  sessionId         String
+  session           VisionSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  // Checklist structure
+  category          String   // Session Setup, Core Content, YouTube Long-Form, etc.
+  title             String
+  description       String?  @db.Text
+  orderIndex        Int
+  
+  // Task properties
+  required          Boolean  @default(true)
+  conditional       Boolean  @default(false)
+  status            String   @default("Not Started") // Not Started, In Progress, Ready for Review, Approved, Scheduled, Published, Skipped, Blocked
+  
+  // Task details
+  completed         Boolean  @default(false)
+  completedAt       DateTime?
+  assignedTo        String?
+  dueDate           DateTime?
+  notes             String?  @db.Text
+  liveUrl           String?
+  
+  // Metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([sessionId, category])
+  @@index([sessionId, required])
+  @@index([status])
+}
+
+// Publishing Matrix Item
+model PublishingMatrixItem {
+  id                String   @id @default(cuid())
+  sessionId         String
+  session           VisionSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  // Publishing details
+  asset             String   // YouTube Long-Form, YouTube Podcast, YouTube Short 1, etc.
+  platform          String   // YouTube, SKOOL, Facebook, Instagram
+  status            String   @default("Not Scheduled")
+  
+  // Scheduling
+  scheduledDate     DateTime?
+  publishedDate     DateTime?
+  liveUrl           String?
+  
+  // Details
+  notes             String?  @db.Text
+  
+  // Metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([sessionId])
+  @@index([platform])
+  @@index([status])
+}
+
+// Import Log - Audit trail for ZIP imports
+model ImportLog {
+  id                String   @id @default(cuid())
+  sessionId         String
+  session           VisionSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  // Import details
+  importType        String   // new_session, update_session
+  zipFilename       String
+  zipPath           String
+  manifestFound     Boolean  @default(false)
+  manifestData      String?  @db.Text
+  
+  // Results
+  assetsImported    Int      @default(0)
+  assetsMissing     Int      @default(0)
+  assetsUnclassified Int     @default(0)
+  errors            String?  @db.Text
+  warnings          String?  @db.Text
+  
+  // Metadata
+  importedAt        DateTime @default(now())
+  importedBy        String   @default("system")
+  
+  @@index([sessionId])
+  @@index([importedAt])
+}
