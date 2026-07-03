@@ -57,11 +57,11 @@ export async function POST(req: NextRequest) {
     // Delete: "CFV_VS_00001_Life_Is_Long_Vision_Session_Package---1ef198c5-12c6-4432-9112-7301a291d205"
     
     const sessionsToDelete = allSessions.filter(s => 
-      s.workingTitle.includes('---') || s.workingTitle.includes('_')
+      s.workingTitle && (s.workingTitle.includes('---') || s.workingTitle.includes('_'))
     );
 
     const sessionsToKeep = allSessions.filter(s => 
-      !s.workingTitle.includes('---') && !s.workingTitle.includes('_')
+      !s.workingTitle || (!s.workingTitle.includes('---') && !s.workingTitle.includes('_'))
     );
 
     console.log(`🗑️  Deleting ${sessionsToDelete.length} duplicate imports...`);
