@@ -38,7 +38,7 @@ export default function ImportPage() {
 
   return (
     <div className="min-h-screen bg-[#fdfbf7] text-gray-900">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <header className="mb-8">
           <h1 className="text-4xl font-bold text-green-600 mb-2">📥 Import Vision Session Package</h1>
           <p className="text-gray-600">Upload a Vision Session ZIP file to import all content and assets</p>
