@@ -5,9 +5,9 @@ import SessionTabs from './SessionTabs'
 
 export const dynamic = 'force-dynamic'
 
-async function getSession(sessionId: string) {
+async function getSession(id: string) {
   const session = await prisma.visionSession.findUnique({
-    where: { sessionId },
+    where: { id },
     include: {
       assets: { orderBy: { createdAt: 'desc' } },
       checklistItems: { orderBy: { orderIndex: 'asc' } },

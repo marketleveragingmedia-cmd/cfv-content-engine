@@ -69,13 +69,13 @@ export async function POST(req: NextRequest) {
     for (const session of sessionsToDelete) {
       // Delete related records first
       await prisma.checklistItem.deleteMany({
-        where: { visionSessionId: session.id }
+        where: { sessionId: session.id }
       });
       await prisma.publishingMatrixItem.deleteMany({
-        where: { visionSessionId: session.id }
+        where: { sessionId: session.id }
       });
       await prisma.asset.deleteMany({
-        where: { visionSessionId: session.id }
+        where: { sessionId: session.id }
       });
       
       // Delete session

@@ -4,32 +4,30 @@ import { prisma } from '@/lib/prisma'
 export const dynamic = 'force-dynamic'
 
 async function getSessions(searchParams: any) {
-  try {
-    const { status, stage, search } = searchParams
-    
-    const where: any = {}
-    if (status) where.status = status
-    if (stage) where.founderPathwayStage = stage
-    if (search) {
-      where.OR = [
-        { sessionId: { contains: search, mode: 'insensitive' } },
-        { theme: { contains: search, mode: 'insensitive' } },
-        { workingTitle: { contains: search, mode: 'insensitive' } },
-        { finalTitle: { contains: search, mode: 'insensitive' } }
-      ]
-    }
-    
-    return await prisma.visionSession.findMany({
-      where,
-      orderBy: { updatedAt: 'desc' },
-      include: {
-        checklistItems: true,
-        _count: { select: { assets: true } }
-      }
-    })
-  } catch (error) {
-    return []
+  const { status, stage, search } = searchParams
+  
+  const where: any = {}
+  if (status) where.status = status
+  if (stage) where.founderPathwayStage = stage
+  if (search) {
+    where.OR = [
+      { sessionId: { contains: search, mode: 'insensitive' } },
+      { theme: { contains: search, mode: 'insensitive' } },
+      { workingTitle: { contains: search, mode: 'insensitive' } },
+      { finalTitle: { contains: search, mode: 'insensitive' } }
+    ]
   }
+  
+  const sessions = await prisma.visionSession.findMany({
+    where,
+    orderBy: { updatedAt: 'desc' },
+    include: {
+      checklistItems: true,
+      _count: { select: { assets: true } }
+    }
+  })
+  
+  return sessions
 }
 
 function calculateCompletion(checklistItems: any[]) {
@@ -97,7 +95,7 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
             {sessions.map((session: any) => {
               const completion = calculateCompletion(session.checklistItems)
               return (
-                <Link key={session.id} href={`/session/${session.sessionId}`} className="bg-white border border-gray-300 rounded-xl p-5 hover:border-green-600 hover:shadow-md transition cursor-pointer">
+                <Link key={session.id} href={`/session/${session.id}`} className="bg-white border border-gray-300 rounded-xl p-5 hover:border-green-600 hover:shadow-md transition cursor-pointer">
                   <div className="text-green-600 font-semibold mb-2">{session.sessionId}</div>
                   <h3 className="text-lg font-bold mb-3">{session.finalTitle || session.workingTitle || session.theme}</h3>
                   
