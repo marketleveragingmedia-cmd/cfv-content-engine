@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("CFV_POSTGRES_PRISMA_URL")
 }
 
 // Vision Session - Main content record
