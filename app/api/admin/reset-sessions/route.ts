@@ -51,9 +51,11 @@ export async function POST(req: NextRequest) {
       }
     };
 
-    // Step 2: Delete test sessions (0 assets AND 0 checklist items)
+    // Step 2: Delete test sessions (0 assets AND 0 checklist items) OR malformed titles
     const sessionsToDelete = allSessions.filter(s => 
-      s._count.assets === 0 && s._count.checklistItems === 0
+      (s._count.assets === 0 && s._count.checklistItems === 0) ||
+      s.workingTitle.includes('---') || 
+      s.workingTitle.includes('_')
     );
 
     for (const session of sessionsToDelete) {
