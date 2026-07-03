@@ -80,7 +80,7 @@ export async function processVisionSessionZip(
     }
 
     // Use session ID from manifest or ZIP filename, or generate new
-    let sessionId = manifest?.sessionId
+    let sessionId: string | undefined = manifest?.sessionId
     
     if (!sessionId) {
       // Try to extract from filename (e.g., CFV_VS_00001_...)
@@ -94,7 +94,7 @@ export async function processVisionSessionZip(
     if (sessionId) {
       const existing = await prisma.visionSession.findUnique({ where: { sessionId } })
       if (existing) {
-        sessionId = null // Force generation of new ID
+        sessionId = undefined // Force generation of new ID
       }
     }
     
