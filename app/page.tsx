@@ -37,7 +37,7 @@ export default async function Dashboard() {
   const stats = await getDashboardStats()
   
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-[#fdfbf7] text-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8">
