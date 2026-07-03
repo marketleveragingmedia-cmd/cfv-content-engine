@@ -109,8 +109,9 @@ export async function processVisionSessionZip(
       }
     })
 
-    // Create storage directory
-    const storageDir = join(process.cwd(), 'storage', sessionId)
+    // Create storage directory (use /tmp for Vercel serverless)
+    const baseStorageDir = process.env.VERCEL ? '/tmp/cfv-storage' : join(process.cwd(), 'storage')
+    const storageDir = join(baseStorageDir, sessionId)
     if (!existsSync(storageDir)) {
       await mkdir(storageDir, { recursive: true })
     }
