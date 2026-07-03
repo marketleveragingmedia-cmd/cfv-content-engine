@@ -8,7 +8,11 @@ export async function GET() {
     // Add packageVersion column if missing
     try { await prisma.$executeRawUnsafe(`ALTER TABLE "VisionSession" ADD COLUMN IF NOT EXISTS "packageVersion" TEXT DEFAULT '1.0'`) } catch(e){}
     
-    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "Asset" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "tab" TEXT NOT NULL, "title" TEXT NOT NULL, "content" TEXT, "filePath" TEXT, "mimeType" TEXT, "version" INTEGER NOT NULL DEFAULT 1, "approved" BOOLEAN NOT NULL DEFAULT false, "approvedBy" TEXT, "approvedAt" TIMESTAMP(3), "assetType" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Asset_pkey" PRIMARY KEY ("id"))`)
+    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "Asset" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "tab" TEXT NOT NULL, "title" TEXT NOT NULL, "filename" TEXT, "content" TEXT, "filePath" TEXT, "mimeType" TEXT, "version" INTEGER NOT NULL DEFAULT 1, "approved" BOOLEAN NOT NULL DEFAULT false, "approvedBy" TEXT, "approvedAt" TIMESTAMP(3), "assetType" TEXT, "notes" TEXT, "previousVersionId" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Asset_pkey" PRIMARY KEY ("id"))`)
+    
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "Asset" ADD COLUMN IF NOT EXISTS "filename" TEXT`) } catch(e){}
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "Asset" ADD COLUMN IF NOT EXISTS "notes" TEXT`) } catch(e){}
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "Asset" ADD COLUMN IF NOT EXISTS "previousVersionId" TEXT`) } catch(e){}
     
     await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "ChecklistItem" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "category" TEXT NOT NULL, "title" TEXT NOT NULL, "required" BOOLEAN NOT NULL DEFAULT false, "conditional" BOOLEAN NOT NULL DEFAULT false, "orderIndex" INTEGER NOT NULL, "completed" BOOLEAN NOT NULL DEFAULT false, "completedAt" TIMESTAMP(3), "status" TEXT NOT NULL DEFAULT 'Not Started', "notes" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "ChecklistItem_pkey" PRIMARY KEY ("id"))`)
     
