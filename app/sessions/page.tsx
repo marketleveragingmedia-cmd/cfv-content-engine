@@ -37,7 +37,18 @@ function calculateCompletion(checklistItems: any[]) {
 }
 
 export default async function SessionsPage({ searchParams }: { searchParams: any }) {
-  const sessions = await getSessions(searchParams)
+  let sessions
+  try {
+    sessions = await getSessions(searchParams)
+  } catch (error: any) {
+    console.error('[SessionsPage] Error loading sessions:', error)
+    return (
+      <div className="min-h-screen bg-[#fdfbf7] p-8">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Database Connection Error</h1>
+        <pre className="bg-gray-100 p-4 rounded overflow-auto">{error.message || String(error)}</pre>
+      </div>
+    )
+  }
   
   return (
     <div className="min-h-screen bg-[#fdfbf7] text-gray-900">
