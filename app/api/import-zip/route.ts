@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { processZipImport } from '@/lib/zip-processor'
+import { processVisionSessionZip } from '@/lib/zip-processor'
 import fs from 'fs'
 import path from 'path'
 
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     fs.writeFileSync(tempPath, buffer)
     
     // Process the ZIP
-    const result = await processZipImport(tempPath, file.name)
+    const result = await processVisionSessionZip(tempPath, file.name)
     
     // Clean up temp file
     fs.unlinkSync(tempPath)
