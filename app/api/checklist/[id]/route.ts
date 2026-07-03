@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const body = await req.json()
   const item = await prisma.checklistItem.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       completed: body.completed,
       completedAt: body.completed ? new Date() : null,

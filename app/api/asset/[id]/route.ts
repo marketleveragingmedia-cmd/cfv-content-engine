@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { readFile } from 'fs/promises'
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const asset = await prisma.asset.findUnique({ where: { id: params.id } })
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const asset = await prisma.asset.findUnique({ where: { id } })
   if (!asset) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   
   const action = req.nextUrl.searchParams.get('action')
@@ -21,10 +22,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json(asset)
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const body = await req.json()
   const asset = await prisma.asset.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       approved: body.approved,
       approvedBy: body.approvedBy,

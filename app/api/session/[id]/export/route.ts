@@ -3,9 +3,10 @@ import { prisma } from '@/lib/prisma'
 import AdmZip from 'adm-zip'
 import { readFile } from 'fs/promises'
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await prisma.visionSession.findUnique({
-    where: { sessionId: params.id },
+    where: { sessionId: id },
     include: { assets: true }
   })
   
