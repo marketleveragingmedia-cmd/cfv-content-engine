@@ -51,72 +51,108 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
   }
   
   return (
-    <div className="min-h-screen bg-[#fdfbf7] text-gray-900">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-green-600">All Vision Sessions</h1>
-          <Link href="/import" className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition">
-            + Import New
-          </Link>
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Header Card */}
+        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold" style={{color: 'var(--green-primary)'}}>All Vision Sessions</h1>
+            <Link 
+              href="/import" 
+              className="px-5 py-2.5 text-white rounded-lg font-semibold transition shadow-sm hover:shadow-md"
+              style={{background: 'linear-gradient(135deg, #2D8659 0%, #1F7A47 100%)'}}
+            >
+              + Import New
+            </Link>
+          </div>
         </div>
         
-        <nav className="flex gap-3 mb-8 border-b border-gray-300 pb-4">
-          <Link href="/" className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg font-semibold transition">
-            📊 Dashboard
-          </Link>
-          <Link href="/import" className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg font-semibold transition">
-            📥 Import Package
-          </Link>
-          <Link href="/sessions" className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold">
-            📁 All Sessions
-          </Link>
-        </nav>
+        {/* Navigation Card */}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <nav className="flex gap-3">
+            <Link 
+              href="/" 
+              className="px-4 py-2 rounded-lg font-semibold transition"
+              style={{color: 'var(--green-primary)', border: '2px solid var(--green-primary)'}}
+            >
+              📊 Dashboard
+            </Link>
+            <Link 
+              href="/import" 
+              className="px-4 py-2 rounded-lg font-semibold transition"
+              style={{color: 'var(--green-primary)', border: '2px solid var(--green-primary)'}}
+            >
+              📥 Import Package
+            </Link>
+            <Link 
+              href="/sessions" 
+              className="px-4 py-2 text-white rounded-lg font-semibold"
+              style={{background: 'var(--green-primary)'}}
+            >
+              📁 All Sessions
+            </Link>
+          </nav>
+        </div>
         
-        <div className="flex gap-3 mb-6">
-          <select className="px-4 py-2 bg-white border border-gray-300 rounded-lg">
+        {/* Filters Card */}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <div className="flex gap-3">
+            <select className="px-4 py-2 bg-white border rounded-lg" style={{borderColor: 'var(--border-color)'}}>
             <option value="">All Statuses</option>
             <option value="draft">Draft</option>
             <option value="in-progress">In Progress</option>
             <option value="ready-for-review">Ready for Review</option>
             <option value="ready-to-publish">Ready to Publish</option>
             <option value="published">Published</option>
-          </select>
-          
-          <select className="px-4 py-2 bg-white border border-gray-300 rounded-lg">
+            </select>
+            
+            <select className="px-4 py-2 bg-white border rounded-lg" style={{borderColor: 'var(--border-color)'}}>
             <option value="">All Stages</option>
             <option value="Foundation">Foundation</option>
             <option value="Founder Warm-Up">Founder Warm-Up</option>
             <option value="Founder Education">Founder Education</option>
             <option value="Founder Invitation">Founder Invitation</option>
-          </select>
-          
-          <input type="text" placeholder="Search sessions..." className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg" />
+            </select>
+            
+            <input type="text" placeholder="Search sessions..." className="flex-1 px-4 py-2 bg-white border rounded-lg" style={{borderColor: 'var(--border-color)'}} />
+          </div>
         </div>
         
-        {sessions.length === 0 ? (
-          <div className="bg-white border border-gray-300 rounded-xl p-12 text-center shadow-sm">
-            <h3 className="text-xl text-gray-700 mb-3">No Sessions Found</h3>
-            <p className="text-gray-600 mb-6">Import a Vision Session package to begin</p>
-            <Link href="/import" className="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition">
-              Import Package
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Content Card */}
+        <div className="bg-white rounded-xl shadow-md p-8">
+          {sessions.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-xl mb-3" style={{color: 'var(--text-primary)'}}>No Sessions Found</h3>
+              <p className="mb-6" style={{color: 'var(--text-secondary)'}}>Import a Vision Session package to begin</p>
+              <Link 
+                href="/import" 
+                className="inline-block px-5 py-2.5 text-white rounded-lg font-semibold transition shadow-sm"
+                style={{background: 'linear-gradient(135deg, #2D8659 0%, #1F7A47 100%)'}}
+              >
+                Import Package
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sessions.map((session: any) => {
               const completion = calculateCompletion(session.checklistItems)
               return (
-                <Link key={session.id} href={`/session/${session.id}`} className="bg-white border border-gray-300 rounded-xl p-5 hover:border-green-600 hover:shadow-md transition cursor-pointer">
-                  <div className="text-green-600 font-semibold mb-2">{session.sessionId}</div>
-                  <h3 className="text-lg font-bold mb-3">{session.finalTitle || session.workingTitle || session.theme}</h3>
+                <Link 
+                  key={session.id} 
+                  href={`/session/${session.id}`} 
+                  className="border rounded-xl p-6 hover:shadow-lg transition cursor-pointer"
+                  style={{borderColor: 'var(--border-color)'}}
+                >
+                  <div className="font-semibold mb-2" style={{color: 'var(--green-primary)'}}>{session.sessionId}</div>
+                  <h3 className="text-lg font-bold mb-3" style={{color: 'var(--text-primary)'}}>{session.finalTitle || session.workingTitle || session.theme}</h3>
                   
-                  <div className="flex gap-4 text-sm text-gray-600 mb-3">
+                  <div className="flex gap-4 text-sm mb-3" style={{color: 'var(--text-secondary)'}}>
                     <span>📂 {session.category || 'Uncategorized'}</span>
                     <span>🎯 {session.founderPathwayStage || 'N/A'}</span>
                   </div>
                   
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-xs text-gray-600">{session._count.assets} assets</span>
+                    <span className="text-xs" style={{color: 'var(--text-secondary)'}}>{session._count.assets} assets</span>
                     <span className={`px-2 py-1 rounded text-xs font-semibold ${
                       session.status === 'published' ? 'bg-green-100 text-green-700' :
                       session.status === 'ready-to-publish' ? 'bg-blue-100 text-blue-700' :
@@ -128,14 +164,15 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
                   </div>
                   
                   <div className="bg-gray-200 h-2 rounded-full overflow-hidden mb-2">
-                    <div className="bg-green-600 h-full transition-all" style={{ width: `${completion}%` }} />
+                    <div className="h-full transition-all" style={{ width: `${completion}%`, background: 'var(--green-primary)' }} />
                   </div>
-                  <div className="text-xs text-gray-600">{completion}% Complete</div>
+                  <div className="text-xs" style={{color: 'var(--text-secondary)'}}>{completion}% Complete</div>
                 </Link>
               )
             })}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
