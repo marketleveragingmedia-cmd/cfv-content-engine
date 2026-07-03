@@ -3,7 +3,10 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "VisionSession" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "theme" TEXT NOT NULL, "workingTitle" TEXT, "finalTitle" TEXT, "summary" TEXT, "category" TEXT, "founderPathwayStage" TEXT, "primaryCTA" TEXT, "status" TEXT NOT NULL DEFAULT 'draft', "creator" TEXT NOT NULL DEFAULT 'MzSamantha', "brand" TEXT NOT NULL DEFAULT 'Cash Flow Visionaries', "originalZipPath" TEXT, "originalZipFilename" TEXT, "lastImportedAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "VisionSession_pkey" PRIMARY KEY ("id"))`)
+    await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "VisionSession" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "theme" TEXT NOT NULL, "workingTitle" TEXT, "finalTitle" TEXT, "summary" TEXT, "category" TEXT, "founderPathwayStage" TEXT, "primaryCTA" TEXT, "status" TEXT NOT NULL DEFAULT 'draft', "creator" TEXT NOT NULL DEFAULT 'MzSamantha', "brand" TEXT NOT NULL DEFAULT 'Cash Flow Visionaries', "packageVersion" TEXT DEFAULT '1.0', "originalZipPath" TEXT, "originalZipFilename" TEXT, "lastImportedAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "VisionSession_pkey" PRIMARY KEY ("id"))`)
+    
+    // Add packageVersion column if missing
+    try { await prisma.$executeRawUnsafe(`ALTER TABLE "VisionSession" ADD COLUMN IF NOT EXISTS "packageVersion" TEXT DEFAULT '1.0'`) } catch(e){}
     
     await prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "Asset" ("id" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "tab" TEXT NOT NULL, "title" TEXT NOT NULL, "content" TEXT, "filePath" TEXT, "mimeType" TEXT, "version" INTEGER NOT NULL DEFAULT 1, "approved" BOOLEAN NOT NULL DEFAULT false, "approvedBy" TEXT, "approvedAt" TIMESTAMP(3), "assetType" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Asset_pkey" PRIMARY KEY ("id"))`)
     
@@ -16,6 +19,7 @@ export async function GET() {
     await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "VisionSession_sessionId_key" ON "VisionSession"("sessionId")`)
     await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "VisionSession_status_idx" ON "VisionSession"("status")`)
     await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "VisionSession_createdAt_idx" ON "VisionSession"("createdAt")`)
+    await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "VisionSession_founderPathwayStage_idx" ON "VisionSession"("founderPathwayStage")`)
     await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "Asset_sessionId_idx" ON "Asset"("sessionId")`)
     await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "Asset_tab_idx" ON "Asset"("tab")`)
     await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "ChecklistItem_sessionId_idx" ON "ChecklistItem"("sessionId")`)
