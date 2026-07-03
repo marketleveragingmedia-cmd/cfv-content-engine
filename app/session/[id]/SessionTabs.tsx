@@ -120,6 +120,8 @@ function AssetTab({ session, tab }: { session: any; tab: string }) {
   )
 }
 
+import { AssetActions } from './AssetActions'
+
 function AssetCard({ asset }: { asset: any }) {
   return (
     <div className="bg-gray-950 border border-gray-800 rounded-lg p-4">
@@ -134,14 +136,10 @@ function AssetCard({ asset }: { asset: any }) {
       </div>
       
       {asset.content && (
-        <div className="text-sm text-gray-400 mb-3 line-clamp-3">{asset.content}</div>
+        <div className="text-sm text-gray-400 mb-3 line-clamp-3">{asset.content.substring(0, 200)}...</div>
       )}
       
-      <div className="flex gap-2">
-        <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">View</button>
-        <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">Copy</button>
-        <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">Download</button>
-      </div>
+      <AssetActions asset={asset} />
     </div>
   )
 }
@@ -216,6 +214,8 @@ function VisualAssetsTab({ session }: { session: any }) {
   )
 }
 
+import { ChecklistEditor } from './ChecklistEditor'
+
 function ChecklistTab({ session }: { session: any }) {
   const categories = [...new Set(session.checklistItems.map((i: any) => i.category))] as string[]
   
@@ -237,21 +237,7 @@ function ChecklistTab({ session }: { session: any }) {
               
               <div className="space-y-2">
                 {items.map((item: any) => (
-                  <div key={item.id} className="flex items-start gap-3 text-sm">
-                    <input 
-                      type="checkbox" 
-                      checked={item.completed}
-                      className="mt-1"
-                      readOnly
-                    />
-                    <div className="flex-1">
-                      <span className={item.completed ? 'text-gray-500 line-through' : ''}>
-                        {item.title}
-                      </span>
-                      {item.required && <span className="text-red-500 ml-1">*</span>}
-                      <div className="text-xs text-gray-500 mt-1">{item.status}</div>
-                    </div>
-                  </div>
+                  <ChecklistEditor key={item.id} item={item} />
                 ))}
               </div>
             </div>
@@ -261,6 +247,9 @@ function ChecklistTab({ session }: { session: any }) {
     </div>
   )
 }
+
+import { PublishingEditor } from './PublishingEditor'
+import Link from 'next/link'
 
 function LinksTab({ session }: { session: any }) {
   return (
@@ -277,16 +266,17 @@ function LinksTab({ session }: { session: any }) {
         </div>
         
         <div className="bg-gray-950 border border-gray-800 rounded-lg p-4">
-          <h3 className="font-bold mb-2">Publishing Matrix</h3>
-          <div className="space-y-2">
+          <h3 className="font-bold mb-3">Export Session</h3>
+          <Link href={`/api/session/${session.sessionId}/export`} className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded inline-block">
+            Download Complete Package
+          </Link>
+        </div>
+        
+        <div className="bg-gray-950 border border-gray-800 rounded-lg p-4">
+          <h3 className="font-bold mb-3">Publishing Matrix</h3>
+          <div className="space-y-1">
             {session.publishingMatrix.map((item: any) => (
-              <div key={item.id} className="flex justify-between items-center text-sm py-2 border-b border-gray-800 last:border-0">
-                <div>
-                  <span className="font-semibold">{item.asset}</span>
-                  <span className="text-gray-500 ml-2">({item.platform})</span>
-                </div>
-                <span className="text-gray-400">{item.status}</span>
-              </div>
+              <PublishingEditor key={item.id} item={item} />
             ))}
           </div>
         </div>

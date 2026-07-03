@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@types/adm-zip": "^0.5.8",
+    "adm-zip": "^0.5.18",
     "bcryptjs": "^3.0.3",
     "next": "16.2.10",
     "prisma": "^5.22.0",
