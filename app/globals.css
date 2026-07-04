@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-green-primary: #2D8659;
+  --color-green-dark: #1F7A47;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #4A4A4A;
+  --color-border: #E5E7EB;
+}
 
 :root {
   --green-primary: #2D8659;
