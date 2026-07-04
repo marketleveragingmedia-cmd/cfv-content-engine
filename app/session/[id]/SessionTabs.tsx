@@ -273,7 +273,6 @@ function Field({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
-}
 
 import { PublishingEditor } from './PublishingEditor'
 import Link from 'next/link'
