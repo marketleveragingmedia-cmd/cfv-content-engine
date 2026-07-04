@@ -94,11 +94,14 @@ export async function processVisionSessionZip(
     // Check if session ID already exists
     let existingSession: any = null
     if (sessionId) {
+      console.log('[zip-processor] Found sessionId from ZIP:', sessionId, 'updateExisting:', updateExisting)
       existingSession = await prisma.visionSession.findUnique({ 
         where: { sessionId },
         include: { assets: true }
       })
+      console.log('[zip-processor] Existing session found:', !!existingSession, 'will update:', existingSession && updateExisting)
       if (existingSession && !updateExisting) {
+        console.log('[zip-processor] Forcing new ID because updateExisting=false')
         sessionId = undefined // Force generation of new ID only if not updating
       }
     }
