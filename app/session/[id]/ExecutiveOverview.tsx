@@ -6,26 +6,32 @@ import { CopyAllButtons } from './CopyAllButtons'
 
 interface ExecutiveOverviewProps {
   session: any
+  setActiveTab: (tab: string) => void
 }
 
-export function ExecutiveOverview({ session }: ExecutiveOverviewProps) {
+export function ExecutiveOverview({ session, setActiveTab }: ExecutiveOverviewProps) {
+  const switchTab = (tabId: string) => {
+    setActiveTab(tabId)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <div className="space-y-6">
       {/* Quick Actions Bar */}
       <div className="bg-white rounded-lg shadow-sm p-4 border-2" style={{borderColor: '#1E8E5A'}}>
         <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Quick Actions</h3>
         <div className="flex flex-wrap gap-2">
-          <QuickActionButton href="#transcript" label="View Transcript" icon="📝" />
-          <QuickActionButton href="#youtube-package" label="Copy YouTube Package" icon="📋" />
-          <QuickActionButton href="#notebooklm" label="Open NotebookLM Source" icon="📚" />
-          <QuickActionButton href="#visual-assets" label="View Visual Assets" icon="🖼️" />
-          <QuickActionButton href="#checklist" label="Update Checklist" icon="✅" />
+          <QuickActionButton onClick={() => switchTab('transcript')} label="View Transcript" icon="📝" />
+          <QuickActionButton onClick={() => window.scrollBy(0, 600)} label="Copy YouTube Package" icon="📋" />
+          <QuickActionButton onClick={() => switchTab('notebooklm')} label="Open NotebookLM Source" icon="📚" />
+          <QuickActionButton onClick={() => switchTab('visual-assets')} label="View Visual Assets" icon="🖼️" />
+          <QuickActionButton onClick={() => switchTab('checklist')} label="Update Checklist" icon="✅" />
           <QuickActionButton href={`/api/session/${session.sessionId}/export`} label="Export ZIP" icon="💾" external />
         </div>
       </div>
 
       {/* Next Action Engine */}
-      <NextActionCard session={session} />
+      <NextActionCard session={session} setActiveTab={setActiveTab} />
 
       {/* Asset Readiness Strip */}
       <AssetReadinessStrip session={session} />
@@ -91,8 +97,8 @@ export function ExecutiveOverview({ session }: ExecutiveOverviewProps) {
   )
 }
 
-function QuickActionButton({ href, label, icon, external }: { href: string; label: string; icon: string; external?: boolean }) {
-  if (external) {
+function QuickActionButton({ href, onClick, label, icon, external }: { href?: string; onClick?: () => void; label: string; icon: string; external?: boolean }) {
+  if (external && href) {
     return (
       <a
         href={href}
@@ -107,13 +113,7 @@ function QuickActionButton({ href, label, icon, external }: { href: string; labe
 
   return (
     <button
-      onClick={() => {
-        // Scroll to section or trigger action
-        const element = document.querySelector(href)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      }}
+      onClick={onClick}
       className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 text-sm font-semibold rounded-lg hover:bg-gray-50 transition"
       style={{borderColor: '#1E8E5A', color: '#1E8E5A'}}
     >
@@ -123,7 +123,7 @@ function QuickActionButton({ href, label, icon, external }: { href: string; labe
   )
 }
 
-function NextActionCard({ session }: { session: any }) {
+function NextActionCard({ session, setActiveTab }: { session: any; setActiveTab: (tab: string) => void }) {
   const nextActionData = getNextAction(session.checklistItems || [])
   
   if (!nextActionData) {
@@ -165,16 +165,29 @@ function NextActionCard({ session }: { session: any }) {
 
       <div className="flex gap-3">
         <button 
+          onClick={() => {
+            if (nextActionData?.assetTab) {
+              setActiveTab(nextActionData.assetTab)
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            } else {
+              setActiveTab('checklist')
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }
+          }}
           className="px-6 py-2 text-white font-semibold rounded-lg hover:opacity-90 transition"
           style={{background: '#1E8E5A'}}
         >
-          Open Asset
+          {nextActionData?.assetTab ? 'Open Asset' : 'View Checklist'}
         </button>
         <button 
+          onClick={() => {
+            setActiveTab('checklist')
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
           className="px-6 py-2 bg-white border-2 font-semibold rounded-lg hover:bg-gray-50 transition"
           style={{borderColor: '#1E8E5A', color: '#1E8E5A'}}
         >
-          Mark Complete
+          Update Checklist
         </button>
       </div>
     </div>

@@ -96,7 +96,7 @@ export default function SessionTabs({ session }: { session: any }) {
         {/* Main Content Area */}
         <div className="flex-1 min-w-0">
           <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 min-h-[400px]">
-        {activeTab === 'executive' && <ExecutiveOverviewTab session={session} />}
+        {activeTab === 'executive' && <ExecutiveOverviewTab session={session} setActiveTab={setActiveTab} />}
         {activeTab === 'overview' && <OverviewTab session={session} />}
         {activeTab === 'transcript' && <AssetTab session={session} tab="Transcript" />}
         {activeTab === 'core-message' && <AssetTab session={session} tab="Core Message" />}
@@ -426,8 +426,8 @@ function AuditTab({ session }: { session: any }) {
   )
 }
 
-function ExecutiveOverviewTab({ session }: { session: any }) {
-  return <ExecutiveOverview session={session} />
+function ExecutiveOverviewTab({ session, setActiveTab }: { session: any; setActiveTab: (tab: string) => void }) {
+  return <ExecutiveOverview session={session} setActiveTab={setActiveTab} />
 }
 
 function Field({ label, value }: { label: string; value: string }) {
