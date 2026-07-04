@@ -6,6 +6,7 @@ import { join, extname, basename, dirname } from 'path'
 import { existsSync } from 'fs'
 
 interface ManifestData {
+  // CamelCase fields (old format)
   sessionId?: string
   theme?: string
   workingTitle?: string
@@ -17,6 +18,17 @@ interface ManifestData {
   brand?: string
   packageVersion?: string
   summary?: string
+  movementTheme?: string
+  contentType?: string
+  // snake_case fields (new format)
+  vision_session_id?: string
+  movement_theme?: string
+  working_title?: string
+  final_title?: string
+  primary_category?: string
+  founder_pathway_stage?: string
+  primary_cta?: string
+  content_type?: string
 }
 
 interface ProcessResult {
@@ -81,7 +93,7 @@ export async function processVisionSessionZip(
     }
 
     // Use session ID from manifest or ZIP filename, or generate new
-    let sessionId: string | undefined = manifest?.sessionId
+    let sessionId: string | undefined = manifest?.sessionId || manifest?.vision_session_id
     
     if (!sessionId) {
       // Try to extract from filename (e.g., CFV_VS_00001_...)
@@ -122,13 +134,15 @@ export async function processVisionSessionZip(
     // Create or Update Vision Session
     const sessionData = {
       sessionId,
-      theme: manifest?.theme || 'Imported Session',
-      workingTitle: manifest?.workingTitle || zipFilename.replace('.zip', ''),
-      finalTitle: manifest?.finalTitle,
+      theme: manifest?.theme || manifest?.movement_theme || 'Imported Session',
+      workingTitle: manifest?.workingTitle || manifest?.working_title || zipFilename.replace('.zip', ''),
+      finalTitle: manifest?.finalTitle || manifest?.final_title,
       summary: manifest?.summary,
-      category: manifest?.category,
-      founderPathwayStage: manifest?.founderPathwayStage || 'Foundation',
-      primaryCTA: manifest?.primaryCTA,
+      category: manifest?.category || manifest?.primary_category,
+      movementTheme: manifest?.movementTheme || manifest?.movement_theme || manifest?.theme,
+      contentType: manifest?.contentType || manifest?.content_type || 'Vision Session',
+      founderPathwayStage: manifest?.founderPathwayStage || manifest?.founder_pathway_stage || 'Foundation',
+      primaryCTA: manifest?.primaryCTA || manifest?.primary_cta,
       creator: manifest?.creator || 'MzSamantha',
       brand: manifest?.brand || 'Cash Flow Visionaries',
       status: 'draft',
