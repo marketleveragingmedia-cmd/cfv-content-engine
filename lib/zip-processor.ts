@@ -78,8 +78,7 @@ export async function processVisionSessionZip(
     // Extract manifest
     let manifest: ManifestData | null = null
     const manifestEntry = zipEntries.find(e => 
-      e.entryName.includes('manifest.json') || 
-      e.entryName.includes('Manifest')
+      e.entryName.toLowerCase().endsWith('manifest.json')
     )
 
     if (manifestEntry) {
