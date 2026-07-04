@@ -23,11 +23,16 @@ async function getSession(id: string) {
   const allCompleted = session.checklistItems.filter((i: any) => i.completed).length
   const allTotal = session.checklistItems.length
   
+  const requiredCompletion = requiredTotal > 0 ? Math.round((requiredCompleted / requiredTotal) * 100) : 0
+  const overallCompletion = allTotal > 0 ? Math.round((allCompleted / allTotal) * 100) : 0
+  
   return {
     ...session,
+    requiredCompletion,
+    overallCompletion,
     completion: {
-      required: requiredTotal > 0 ? Math.round((requiredCompleted / requiredTotal) * 100) : 0,
-      overall: allTotal > 0 ? Math.round((allCompleted / allTotal) * 100) : 0
+      required: requiredCompletion,
+      overall: overallCompletion
     }
   }
 }

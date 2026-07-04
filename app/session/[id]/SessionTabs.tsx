@@ -1,10 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { ExecutiveOverview } from './ExecutiveOverview'
+import { EnhancedChecklist } from './EnhancedChecklist'
 
 const TABS = [
+  { id: 'executive', label: 'Executive Overview', icon: '⚡' },
   { id: 'checklist', label: 'Publishing Checklist', icon: '✅' },
-  { id: 'overview', label: 'Overview', icon: '📋' },
+  { id: 'overview', label: 'Session Details', icon: '📋' },
   { id: 'transcript', label: 'Transcript', icon: '📝' },
   { id: 'core-message', label: 'Core Message', icon: '💡' },
   { id: 'youtube-long-form', label: 'YouTube Long-Form', icon: '🎥' },
@@ -21,7 +24,7 @@ const TABS = [
 ]
 
 export default function SessionTabs({ session }: { session: any }) {
-  const [activeTab, setActiveTab] = useState('checklist')
+  const [activeTab, setActiveTab] = useState('executive')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
   const activeTabData = TABS.find(t => t.id === activeTab)
@@ -93,6 +96,7 @@ export default function SessionTabs({ session }: { session: any }) {
         {/* Main Content Area */}
         <div className="flex-1 min-w-0">
           <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 min-h-[400px]">
+        {activeTab === 'executive' && <ExecutiveOverviewTab session={session} />}
         {activeTab === 'overview' && <OverviewTab session={session} />}
         {activeTab === 'transcript' && <AssetTab session={session} tab="Transcript" />}
         {activeTab === 'core-message' && <AssetTab session={session} tab="Core Message" />}
@@ -323,38 +327,8 @@ function VisualAssetsTab({ session }: { session: any }) {
   )
 }
 
-import { ChecklistEditor } from './ChecklistEditor'
-
 function ChecklistTab({ session }: { session: any }) {
-  const categories = [...new Set(session.checklistItems.map((i: any) => i.category))] as string[]
-  
-  return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Publishing Checklist</h2>
-      
-      <div className="space-y-6">
-        {categories.map(category => {
-          const items = session.checklistItems.filter((i: any) => i.category === category)
-          const completed = items.filter((i: any) => i.completed).length
-          
-          return (
-            <div key={category} className="bg-white border border-gray-200 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="font-bold">{category}</h3>
-                <span className="text-sm text-gray-900 font-semibold">{completed}/{items.length}</span>
-              </div>
-              
-              <div className="space-y-2">
-                {items.map((item: any) => (
-                  <ChecklistEditor key={item.id} item={item} />
-                ))}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
+  return <EnhancedChecklist session={session} />
 }
 
 import { PublishingEditor } from './PublishingEditor'
@@ -450,6 +424,10 @@ function AuditTab({ session }: { session: any }) {
       )}
     </div>
   )
+}
+
+function ExecutiveOverviewTab({ session }: { session: any }) {
+  return <ExecutiveOverview session={session} />
 }
 
 function Field({ label, value }: { label: string; value: string }) {

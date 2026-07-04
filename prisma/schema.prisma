@@ -15,14 +15,25 @@ model VisionSession {
   workingTitle          String?
   finalTitle            String?
   theme                 String
-  category              String?
+  category              String?  // Primary Category: Mindset, Manifesto, Community, etc.
+  movementTheme         String?  // Movement Theme: Foundation, Awareness, Participation, etc.
   summary               String?  @db.Text
   creator               String   @default("MzSamantha")
   brand                 String   @default("Cash Flow Visionaries")
-  founderPathwayStage   String?
+  founderPathwayStage   String?  // Foundation, Founder Warm-Up, Founder Education, Founder Invitation
   primaryCTA            String?  @db.Text
-  status                String   @default("draft")
+  status                String   @default("draft")  // Technical status
+  humanStatus           String?  // Human-facing status: "Foundation Content in Production", etc.
+  contentType           String   @default("Vision Session")  // Vision Session, YouTube Long-Form, etc.
   packageVersion        String   @default("1.0")
+  
+  // Next Action Engine
+  nextAction            String?  // Current next required action
+  nextActionReason      String?  @db.Text  // Why this action matters
+  
+  // Completion metrics
+  requiredCompletion    Int      @default(0)  // Required tasks completion %
+  overallCompletion     Int      @default(0)  // Overall tasks completion %
   
   // Metadata
   createdAt             DateTime @default(now())
@@ -41,7 +52,10 @@ model VisionSession {
   
   @@index([sessionId])
   @@index([status])
+  @@index([humanStatus])
   @@index([founderPathwayStage])
+  @@index([movementTheme])
+  @@index([contentType])
 }
 
 // Asset - Text content, images, documents
@@ -94,7 +108,9 @@ model ChecklistItem {
   // Task properties
   required          Boolean  @default(true)
   conditional       Boolean  @default(false)
+  founderReview     Boolean  @default(false)  // Requires Founder review/approval
   status            String   @default("Not Started") // Not Started, In Progress, Ready for Review, Approved, Scheduled, Published, Skipped, Blocked
+  blockReason       String?  // Why task is blocked
   
   // Task details
   completed         Boolean  @default(false)
@@ -111,6 +127,7 @@ model ChecklistItem {
   @@index([sessionId, category])
   @@index([sessionId, required])
   @@index([status])
+  @@index([founderReview])
 }
 
 // Publishing Matrix Item

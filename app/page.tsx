@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import { FounderReadinessMeter } from '@/components/FounderReadinessMeter'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,9 +22,17 @@ async function getDashboardStats() {
       }
     })
     
-    return { total, inProgress, readyToPublish, published, recentSessions }
+    // Get all sessions for Founder Readiness Meter
+    const allSessions = await prisma.visionSession.findMany({
+      select: {
+        status: true,
+        founderPathwayStage: true
+      }
+    })
+    
+    return { total, inProgress, readyToPublish, published, recentSessions, allSessions }
   } catch (error) {
-    return { total: 0, inProgress: 0, readyToPublish: 0, published: 0, recentSessions: [] }
+    return { total: 0, inProgress: 0, readyToPublish: 0, published: 0, recentSessions: [], allSessions: [] }
   }
 }
 
@@ -34,7 +43,7 @@ function calculateCompletion(checklistItems: any[]) {
 }
 
 export default async function HomePage() {
-  const { total, inProgress, readyToPublish, published, recentSessions } = await getDashboardStats()
+  const { total, inProgress, readyToPublish, published, recentSessions, allSessions } = await getDashboardStats()
   
   return (
     <div className="min-h-screen py-8 px-4">
@@ -85,6 +94,11 @@ export default async function HomePage() {
             <StatCard label="Ready to Publish" value={readyToPublish} color="blue" />
             <StatCard label="Published" value={published} color="green" />
           </div>
+        </div>
+
+        {/* Founder Readiness Meter */}
+        <div className="mb-6">
+          <FounderReadinessMeter sessions={allSessions} />
         </div>
         
         {/* Recent Sessions Card */}
