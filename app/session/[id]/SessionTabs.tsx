@@ -1,7 +1,7 @@
+import { VisualAssetsTab } from './VisualAssets'
 'use client'
 
 import { useState } from 'react'
-import { VisualAssetsTab } from './VisualAssets'
 
 const TABS = [
   { id: 'checklist', label: 'Publishing Checklist', icon: '✅' },
@@ -185,7 +185,40 @@ function NotebookLMTab({ session }: { session: any }) {
     </div>
   )
 }
+
+function VisualAssetsTab({ session }: { session: any }) {
+  const images = session.assets.filter((a: any) => a.mimeType?.startsWith('image/'))
+  
+  return (
+    <div>
+      <h2 className="text-2xl font-bold mb-4">Visual Assets</h2>
+      
+      {images.length === 0 ? (
+        <div className="text-center py-12 text-gray-700">
+          <p>No visual assets found</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {images.map((image: any) => (
+            <div key={image.id} className="bg-white border border-gray-200 rounded-lg p-3">
+              <div className="aspect-video bg-gray-100 rounded mb-2 flex items-center justify-center">
+                <span className="text-4xl">🖼️</span>
+              </div>
+              <p className="text-sm font-semibold mb-2">{image.title}</p>
+              <div className="flex gap-2">
+                <button className="px-2 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs transition">View</button>
+                <button className="px-2 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs transition">Download</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
+
+import { ChecklistEditor } from './ChecklistEditor'
+
 function ChecklistTab({ session }: { session: any }) {
   const categories = [...new Set(session.checklistItems.map((i: any) => i.category))] as string[]
   
