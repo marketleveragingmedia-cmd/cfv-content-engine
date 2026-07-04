@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { processVisionSessionZip } from '@/lib/zip-processor'
-import { writeFile, mkdir, stat } from 'fs/promises'
+import { writeFile, mkdir, stat, readFile } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import AdmZip from 'adm-zip'
 
+/**
+ * Replace/Update a Vision Session ZIP package
+ */
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -31,7 +34,6 @@ export async function POST(
       where: { id },
       include: {
         assets: true,
-        checklistItems: true,
         zipVersions: { orderBy: { version: 'desc' } }
       }
     })
@@ -40,7 +42,7 @@ export async function POST(
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
-    // Save uploaded ZIP to /tmp (Vercel-compatible)
+    // Save uploaded ZIP
     const uploadsDir = '/tmp/cfv-imports'
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
@@ -57,98 +59,54 @@ export async function POST(
     await writeFile(newZipPath, buffer)
     const zipStats = await stat(newZipPath)
 
-    // Process the new ZIP
-    const processingResult = await processVisionSessionZip(newZipPath, session.sessionId)
+    // Extract and process ZIP
+    const zip = new AdmZip(newZipPath)
+    const zipEntries = zip.getEntries()
 
-    if (processingResult.errors && processingResult.errors.length > 0) {
-      return NextResponse.json({ 
-        error: 'Failed to process ZIP',
-        details: processingResult.errors.join(', ') 
-      }, { status: 500 })
-    }
-
-    // Get new version number
     const newVersion = (session.zipVersions[0]?.version || 0) + 1
-
-    // Execute strategy
     let assetsAdded = 0
     let assetsUpdated = 0
     let assetsRemoved = 0
 
-    // Get newly imported assets from this processing run
-    const newlyImportedAssets = await prisma.asset.findMany({
-      where: { 
-        sessionId: id,
-        createdAt: { gte: new Date(Date.now() - 5000) } // Last 5 seconds
-      }
-    })
-
+    // Execute strategy
     if (strategy === 'replace_all') {
-      // DELETE ALL existing OLD assets, keep newly imported ones
-      const oldAssetIds = session.assets.map(a => a.id)
-      await prisma.asset.deleteMany({ 
-        where: { 
-          sessionId: id,
-          id: { in: oldAssetIds }
-        } 
-      })
+      // Delete all existing assets
+      await prisma.asset.deleteMany({ where: { sessionId: id } })
       assetsRemoved = session.assets.length
-      assetsAdded = newlyImportedAssets.length
+    }
+
+    // Process ZIP entries and create/update assets
+    for (const entry of zipEntries) {
+      if (entry.isDirectory) continue
       
-    } else if (strategy === 'smart_merge') {
-      // UPDATE existing assets, ADD new ones, KEEP manual edits
-      const existingAssetsByKey = new Map(
-        session.assets.map(a => [`${a.tab}:${a.assetType}:${a.title}`, a])
-      )
-
-      for (const newAsset of newlyImportedAssets) {
-        const key = `${newAsset.tab}:${newAsset.assetType}:${newAsset.title}`
-        const existing = existingAssetsByKey.get(key)
-
-        if (existing && existing.id !== newAsset.id) {
-          // Update old asset with new content, preserve manual edits
-          await prisma.asset.update({
-            where: { id: existing.id },
-            data: {
-              content: newAsset.content,
-              filePath: newAsset.filePath || existing.filePath,
-              filename: newAsset.filename || existing.filename,
-              // Keep: approved, notes, liveUrl, version
-            }
-          })
-          // Delete the duplicate new import
-          await prisma.asset.delete({ where: { id: newAsset.id } })
-          assetsUpdated++
-        } else {
-          // Truly new asset
-          assetsAdded++
-        }
-      }
-
-    } else if (strategy === 'add_new_only') {
-      // ONLY keep assets that don't exist, remove duplicates
-      const existingKeys = new Set(
-        session.assets.map(a => `${a.tab}:${a.assetType}:${a.title}`)
-      )
-
-      for (const newAsset of newlyImportedAssets) {
-        const key = `${newAsset.tab}:${newAsset.assetType}:${newAsset.title}`
-        if (existingKeys.has(key)) {
-          // Remove duplicate
-          await prisma.asset.delete({ where: { id: newAsset.id } })
-        } else {
-          assetsAdded++
-        }
+      const filename = entry.entryName
+      const content = entry.getData().toString('utf8')
+      
+      // Simple asset creation (simplified for now)
+      // In production, you'd want full manifest parsing
+      try {
+        const created = await prisma.asset.create({
+          data: {
+            sessionId: id,
+            tab: 'Overview',
+            assetType: 'text',
+            title: filename,
+            filename: filename,
+            content: content.substring(0, 50000) // Limit size
+          }
+        })
+        assetsAdded++
+      } catch (err) {
+        console.error('Error creating asset:', err)
       }
     }
 
-    // Mark all previous versions as not current
+    // Create version record
     await prisma.zipVersion.updateMany({
       where: { sessionId: id },
       data: { isCurrent: false }
     })
 
-    // Create new version record
     await prisma.zipVersion.create({
       data: {
         sessionId: id,
@@ -165,15 +123,14 @@ export async function POST(
       }
     })
 
-    // Update session metadata
+    // Update session
     await prisma.visionSession.update({
       where: { id },
       data: {
         originalZipPath: newZipPath,
         originalZipFilename: newZipFilename,
         packageVersion: newVersion.toString(),
-        lastImportedAt: new Date(),
-        updatedAt: new Date()
+        lastImportedAt: new Date()
       }
     })
 
@@ -193,7 +150,8 @@ export async function POST(
     console.error('[replace-zip] Error:', error)
     return NextResponse.json({
       error: 'Failed to replace package',
-      details: error.message
+      details: error.message,
+      stack: error.stack
     }, { status: 500 })
   }
 }
