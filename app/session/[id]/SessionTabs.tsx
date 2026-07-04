@@ -84,14 +84,14 @@ function OverviewTab({ session }: { session: any }) {
       
       {session.summary && (
         <div className="mt-6">
-          <label className="block text-sm font-semibold text-gray-600 mb-2">Summary</label>
+          <label className="block text-sm font-semibold text-gray-900 font-semibold mb-2">Summary</label>
           <p className="text-gray-900">{session.summary}</p>
         </div>
       )}
       
       {session.primaryCTA && (
         <div className="mt-4">
-          <label className="block text-sm font-semibold text-gray-600 mb-2">Primary CTA</label>
+          <label className="block text-sm font-semibold text-gray-900 font-semibold mb-2">Primary CTA</label>
           <p className="text-gray-900">{session.primaryCTA}</p>
         </div>
       )}
@@ -138,7 +138,7 @@ function AssetCard({ asset }: { asset: any }) {
       </div>
       
       {asset.content && (
-        <div className="text-sm text-gray-600 mb-3 line-clamp-3">{asset.content.substring(0, 200)}...</div>
+        <div className="text-sm text-gray-900 font-semibold mb-3 line-clamp-3">{asset.content.substring(0, 200)}...</div>
       )}
       
       <AssetActions asset={asset} />
@@ -156,7 +156,7 @@ function NotebookLMTab({ session }: { session: any }) {
       
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <h3 className="font-bold mb-2">📄 NotebookLM Source</h3>
-        <p className="text-sm text-gray-600 mb-3">Clean source document for upload</p>
+        <p className="text-sm text-gray-900 font-semibold mb-3">Clean source document for upload</p>
         {source ? (
           <div className="flex gap-2">
             <button className="px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-sm transition">View</button>
@@ -170,7 +170,7 @@ function NotebookLMTab({ session }: { session: any }) {
       
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <h3 className="font-bold mb-2">📋 Generation Instructions</h3>
-        <p className="text-sm text-gray-600 mb-3">Instructions for NotebookLM output</p>
+        <p className="text-sm text-gray-900 font-semibold mb-3">Instructions for NotebookLM output</p>
         {instructions ? (
           <div className="flex gap-2">
             <button className="px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-sm transition">View</button>
@@ -234,7 +234,7 @@ function ChecklistTab({ session }: { session: any }) {
             <div key={category} className="bg-white border border-gray-200 rounded-lg p-4">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="font-bold">{category}</h3>
-                <span className="text-sm text-gray-600">{completed}/{items.length}</span>
+                <span className="text-sm text-gray-900 font-semibold">{completed}/{items.length}</span>
               </div>
               
               <div className="space-y-2">
@@ -261,7 +261,7 @@ function LinksTab({ session }: { session: any }) {
       <div className="space-y-4">
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <h3 className="font-bold mb-2">Original Package</h3>
-          <p className="text-sm text-gray-600 mb-2">{session.originalZipFilename}</p>
+          <p className="text-sm text-gray-900 font-semibold mb-2">{session.originalZipFilename}</p>
           <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">
             Download Original ZIP
           </button>
@@ -301,7 +301,7 @@ function AuditTab({ session }: { session: any }) {
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <p className="font-semibold">{log.importType.replace(/_/g, ' ')}</p>
-                  <p className="text-sm text-gray-600">{log.zipFilename}</p>
+                  <p className="text-sm text-gray-900 font-semibold">{log.zipFilename}</p>
                 </div>
                 <span className="text-xs text-gray-700">
                   {new Date(log.importedAt).toLocaleString()}
@@ -333,7 +333,7 @@ function AuditTab({ session }: { session: any }) {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-600 mb-1">{label}</label>
+      <label className="block text-sm font-semibold text-gray-900 font-semibold mb-1">{label}</label>
       <p className="text-gray-200">{value}</p>
     </div>
   )

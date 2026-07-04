@@ -24,7 +24,7 @@ export function ChecklistEditor({ item }: { item: any }) {
       <input type="checkbox" checked={item.completed} onChange={handleToggle} />
       <span className={item.completed ? 'line-through text-gray-500' : ''}>{item.title}</span>
       {item.required && <span className="text-red-500">*</span>}
-      <select value={item.status} onChange={(e) => handleStatusChange(e.target.value)} className="ml-auto px-2 py-1 bg-gray-800 rounded text-xs">
+      <select value={item.status} onChange={(e) => handleStatusChange(e.target.value)} className="ml-auto px-3 py-1.5 bg-white border border-gray-300 rounded text-sm text-gray-900">
         <option>Not Started</option>
         <option>In Progress</option>
         <option>Ready for Review</option>
