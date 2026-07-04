@@ -26,28 +26,33 @@ export default function SessionTabs({ session }: { session: any }) {
   const activeTabData = TABS.find(t => t.id === activeTab)
   
   return (
-    <div>
-      {/* Tab Navigation */}
-      <div className="bg-white rounded-lg shadow-sm mb-6 p-2">
-        <div className="flex overflow-x-auto gap-1">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-md font-semibold whitespace-nowrap transition text-sm ${
-                activeTab === tab.id
-                  ? 'bg-green-600 text-white'
-                  : 'text-green-600 hover:bg-green-50'
-              }`}
-            >
-              {tab.icon} {tab.label}
-            </button>
-          ))}
+    <div className="flex gap-6">
+      {/* Left Sidebar Navigation */}
+      <div className="w-64 flex-shrink-0">
+        <div className="bg-white rounded-lg shadow-sm p-3 sticky top-4">
+          <h3 className="text-sm font-bold text-gray-700 mb-3 px-3">SECTIONS</h3>
+          <nav className="space-y-1">
+            {TABS.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`w-full text-left px-3 py-2.5 rounded-lg font-semibold transition text-sm flex items-center gap-2 ${
+                  activeTab === tab.id
+                    ? 'bg-green-600 text-white shadow-sm'
+                    : 'text-gray-700 hover:bg-green-50 hover:text-green-700'
+                }`}
+              >
+                <span className="text-lg">{tab.icon}</span>
+                <span className="flex-1">{tab.label}</span>
+              </button>
+            ))}
+          </nav>
         </div>
       </div>
       
-      {/* Tab Content */}
-      <div className="bg-white rounded-lg shadow-sm p-6 min-h-[400px]">
+      {/* Main Content Area */}
+      <div className="flex-1 min-w-0">
+        <div className="bg-white rounded-lg shadow-sm p-6 min-h-[400px]">
         {activeTab === 'overview' && <OverviewTab session={session} />}
         {activeTab === 'transcript' && <AssetTab session={session} tab="Transcript" />}
         {activeTab === 'core-message' && <AssetTab session={session} tab="Core Message" />}
@@ -63,6 +68,7 @@ export default function SessionTabs({ session }: { session: any }) {
         {activeTab === 'checklist' && <ChecklistTab session={session} />}
         {activeTab === 'links' && <LinksTab session={session} />}
         {activeTab === 'audit' && <AuditTab session={session} />}
+        </div>
       </div>
     </div>
   )
