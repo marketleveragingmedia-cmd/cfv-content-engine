@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { VisualAssetsTab } from './VisualAssets'
 
 const TABS = [
   { id: 'checklist', label: 'Publishing Checklist', icon: '✅' },
