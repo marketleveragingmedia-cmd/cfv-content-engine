@@ -38,36 +38,64 @@ export async function GET(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${asset.title}</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 10px;
       background: #f5f5f5;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+    @media (min-width: 768px) {
+      body {
+        padding: 20px;
+      }
+    }
     .header {
       background: white;
-      padding: 20px;
+      padding: 15px;
       border-radius: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       width: 100%;
       max-width: 1200px;
     }
+    @media (min-width: 768px) {
+      .header {
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+    }
     .header h1 {
-      margin: 0 0 10px 0;
+      margin: 0 0 8px 0;
       color: #2D8659;
-      font-size: 24px;
+      font-size: 18px;
+      word-break: break-word;
+    }
+    @media (min-width: 768px) {
+      .header h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
     }
     .actions {
       display: flex;
-      gap: 10px;
-      margin-top: 15px;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    @media (min-width: 768px) {
+      .actions {
+        gap: 10px;
+        margin-top: 15px;
+      }
     }
     .btn {
-      padding: 10px 20px;
+      padding: 10px 16px;
       border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
@@ -75,6 +103,15 @@ export async function GET(
       cursor: pointer;
       border: none;
       transition: all 0.2s;
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+    }
+    @media (min-width: 768px) {
+      .btn {
+        flex: 0 0 auto;
+        padding: 10px 20px;
+      }
     }
     .btn-primary {
       background: #2D8659;
@@ -93,10 +130,16 @@ export async function GET(
     }
     .image-container {
       background: white;
-      padding: 20px;
+      padding: 15px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       max-width: 1200px;
+      width: 100%;
+    }
+    @media (min-width: 768px) {
+      .image-container {
+        padding: 20px;
+      }
     }
     .image-container img {
       width: 100%;

@@ -51,15 +51,22 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
   }
   
   return (
-    <div className="min-h-screen py-8 px-4">
+    <div className="min-h-screen py-4 md:py-8 px-2 md:px-4">
       <div className="max-w-5xl mx-auto">
         {/* Header Card */}
-        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold" style={{color: 'var(--green-primary)'}}>All Vision Sessions</h1>
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-8 mb-4 md:mb-6">
+          <Link 
+            href="/"
+            className="inline-block mb-4 md:mb-6 font-semibold hover:underline cursor-pointer text-sm md:text-base"
+            style={{color: 'var(--green-primary)'}}
+          >
+            ← Back to Dashboard
+          </Link>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <h1 className="text-2xl md:text-3xl font-bold" style={{color: 'var(--green-primary)'}}>All Vision Sessions</h1>
             <Link 
               href="/import" 
-              className="px-5 py-2.5 text-white rounded-lg font-semibold transition shadow-sm hover:shadow-md"
+              className="px-5 py-2.5 text-white rounded-lg font-semibold transition shadow-sm hover:shadow-md text-center text-sm md:text-base"
               style={{background: 'linear-gradient(135deg, #2D8659 0%, #1F7A47 100%)'}}
             >
               + Import New
@@ -68,25 +75,25 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
         </div>
         
         {/* Navigation Card */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-          <nav className="flex gap-3">
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-6 mb-4 md:mb-6">
+          <nav className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Link 
               href="/" 
-              className="px-4 py-2 rounded-lg font-semibold transition"
+              className="px-4 py-2 rounded-lg font-semibold transition text-center text-sm md:text-base"
               style={{color: 'var(--green-primary)', border: '2px solid var(--green-primary)'}}
             >
               📊 Dashboard
             </Link>
             <Link 
               href="/import" 
-              className="px-4 py-2 rounded-lg font-semibold transition"
+              className="px-4 py-2 rounded-lg font-semibold transition text-center text-sm md:text-base"
               style={{color: 'var(--green-primary)', border: '2px solid var(--green-primary)'}}
             >
               📥 Import Package
             </Link>
             <Link 
               href="/sessions" 
-              className="px-4 py-2 text-white rounded-lg font-semibold"
+              className="px-4 py-2 text-white rounded-lg font-semibold text-center text-sm md:text-base"
               style={{background: 'var(--green-primary)'}}
             >
               📁 All Sessions
@@ -95,9 +102,9 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
         </div>
         
         {/* Filters Card */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-          <div className="flex gap-3">
-            <select className="px-4 py-2 bg-white border rounded-lg" style={{borderColor: 'var(--border-color)'}}>
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-6 mb-4 md:mb-6">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <select className="px-4 py-2 bg-white border rounded-lg text-sm md:text-base" style={{borderColor: 'var(--border-color)'}}>
             <option value="">All Statuses</option>
             <option value="draft">Draft</option>
             <option value="in-progress">In Progress</option>
@@ -106,7 +113,7 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
             <option value="published">Published</option>
             </select>
             
-            <select className="px-4 py-2 bg-white border rounded-lg" style={{borderColor: 'var(--border-color)'}}>
+            <select className="px-4 py-2 bg-white border rounded-lg text-sm md:text-base" style={{borderColor: 'var(--border-color)'}}>
             <option value="">All Stages</option>
             <option value="Foundation">Foundation</option>
             <option value="Founder Warm-Up">Founder Warm-Up</option>
@@ -114,12 +121,12 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
             <option value="Founder Invitation">Founder Invitation</option>
             </select>
             
-            <input type="text" placeholder="Search sessions..." className="flex-1 px-4 py-2 bg-white border rounded-lg" style={{borderColor: 'var(--border-color)'}} />
+            <input type="text" placeholder="Search sessions..." className="flex-1 px-4 py-2 bg-white border rounded-lg text-sm md:text-base" style={{borderColor: 'var(--border-color)'}} />
           </div>
         </div>
         
         {/* Content Card */}
-        <div className="bg-white rounded-xl shadow-md p-8">
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-8">
           {sessions.length === 0 ? (
             <div className="text-center py-12">
               <h3 className="text-xl mb-3" style={{color: 'var(--text-primary)'}}>No Sessions Found</h3>

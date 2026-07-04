@@ -46,39 +46,39 @@ export default async function HomePage() {
   const { total, inProgress, readyToPublish, published, recentSessions, allSessions } = await getDashboardStats()
   
   return (
-    <div className="min-h-screen py-8 px-4">
+    <div className="min-h-screen py-4 md:py-8 px-2 md:px-4">
       <div className="max-w-5xl mx-auto">
         
         {/* Header Card */}
-        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
-          <h1 className="text-3xl font-bold mb-2" style={{color: 'var(--green-primary)'}}>
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-8 mb-4 md:mb-6">
+          <h1 className="text-xl md:text-3xl font-bold mb-2" style={{color: 'var(--green-primary)'}}>
             🎬 Cash Flow Visionaries Content Engine
           </h1>
-          <p style={{color: 'var(--text-secondary)'}}>
+          <p className="text-sm md:text-base" style={{color: 'var(--text-secondary)'}}>
             Vision Session Management • Content Production • Publishing Workflow
           </p>
         </div>
         
         {/* Navigation Card */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-          <nav className="flex gap-3">
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-6 mb-4 md:mb-6">
+          <nav className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Link 
               href="/" 
-              className="px-4 py-2 text-white rounded-lg font-semibold"
+              className="px-4 py-2 text-white rounded-lg font-semibold text-center text-sm md:text-base"
               style={{background: 'var(--green-primary)'}}
             >
               📊 Dashboard
             </Link>
             <Link 
               href="/import" 
-              className="px-4 py-2 rounded-lg font-semibold transition hover:bg-green-50"
+              className="px-4 py-2 rounded-lg font-semibold transition hover:bg-green-50 text-center text-sm md:text-base"
               style={{color: 'var(--green-primary)', border: '2px solid var(--green-primary)'}}
             >
               📥 Import Package
             </Link>
             <Link 
               href="/sessions" 
-              className="px-4 py-2 rounded-lg font-semibold transition hover:bg-green-50"
+              className="px-4 py-2 rounded-lg font-semibold transition hover:bg-green-50 text-center text-sm md:text-base"
               style={{color: 'var(--green-primary)', border: '2px solid var(--green-primary)'}}
             >
               📁 All Sessions
@@ -87,7 +87,7 @@ export default async function HomePage() {
         </div>
         
         {/* Stats Card */}
-        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-8 mb-4 md:mb-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Total Sessions" value={total} color="green" />
             <StatCard label="In Progress" value={inProgress} color="yellow" />
@@ -97,12 +97,12 @@ export default async function HomePage() {
         </div>
 
         {/* Founder Readiness Meter */}
-        <div className="mb-6">
+        <div className="mb-4 md:mb-6">
           <FounderReadinessMeter sessions={allSessions} />
         </div>
         
         {/* Recent Sessions Card */}
-        <div className="bg-white rounded-xl shadow-md p-8">
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-8">
           <h2 className="text-2xl font-bold mb-6" style={{color: 'var(--green-primary)'}}>
             Recent Sessions
           </h2>

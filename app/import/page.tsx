@@ -38,25 +38,31 @@ export default function ImportPage() {
 
   return (
     <div className="min-h-screen bg-[#fdfbf7] text-gray-900">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold text-green-600 mb-2">📥 Import Vision Session Package</h1>
-          <p className="text-gray-600">Upload a Vision Session ZIP file to import all content and assets</p>
+      <div className="max-w-7xl mx-auto px-2 md:px-4 py-4 md:py-8">
+        <header className="mb-6 md:mb-8">
+          <Link 
+            href="/"
+            className="inline-block mb-4 md:mb-6 font-semibold hover:underline cursor-pointer text-sm md:text-base text-green-600"
+          >
+            ← Back to Dashboard
+          </Link>
+          <h1 className="text-2xl md:text-4xl font-bold text-green-600 mb-2">📥 Import Vision Session Package</h1>
+          <p className="text-sm md:text-base text-gray-600">Upload a Vision Session ZIP file to import all content and assets</p>
         </header>
 
-        <nav className="flex gap-3 mb-8 border-b border-gray-300 pb-4">
-          <Link href="/" className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg font-semibold transition">
+        <nav className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-6 md:mb-8 border-b border-gray-300 pb-4">
+          <Link href="/" className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg font-semibold transition text-center text-sm md:text-base">
             📊 Dashboard
           </Link>
-          <Link href="/import" className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold">
+          <Link href="/import" className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold text-center text-sm md:text-base">
             📥 Import Package
           </Link>
-          <Link href="/sessions" className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg font-semibold transition">
+          <Link href="/sessions" className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg font-semibold transition text-center text-sm md:text-base">
             📁 All Sessions
           </Link>
         </nav>
 
-        <div className="bg-white border border-gray-300 rounded-xl p-8 shadow-sm">
+        <div className="bg-white border border-gray-300 rounded-xl p-4 md:p-8 shadow-sm">
           <form onSubmit={handleUpload} className="space-y-6">
             <div>
               <label className="block text-sm font-semibold mb-3 text-gray-700">
