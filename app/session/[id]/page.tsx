@@ -74,13 +74,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               </span>
             </div>
             
-            <a
-              href={`/api/session/${session.id}/export?format=pdf`}
-              className="inline-block px-4 py-2 text-white rounded-lg font-semibold transition text-sm"
-              style={{background: 'linear-gradient(135deg, #2D8659 0%, #1F7A47 100%)'}}
-            >
-              ⬇️ PDF
-            </a>
+            {/* PDF export button removed - feature not implemented yet */}
           </div>
           
           {/* Meta Grid */}

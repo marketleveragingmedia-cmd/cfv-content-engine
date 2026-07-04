@@ -189,9 +189,11 @@ function VisualAssetsTab({ session }: { session: any }) {
   // Try multiple possible image filters
   const images = session.assets.filter((a: any) => 
     a.assetType === 'Image' || 
+    a.assetType === 'image' ||
     a.mimeType?.startsWith('image/') ||
     a.tab === 'Visual Assets' ||
-    a.title?.toLowerCase().includes('thumbnail')
+    a.title?.toLowerCase().includes('thumbnail') ||
+    a.title?.toLowerCase().includes('image')
   )
   
   const handleView = (imageId: string) => {
@@ -207,14 +209,24 @@ function VisualAssetsTab({ session }: { session: any }) {
     document.body.removeChild(link)
   }
   
+  // Debug info
+  const totalAssets = session.assets.length
+  const assetTypes = [...new Set(session.assets.map((a: any) => a.assetType))].join(', ')
+  
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Visual Assets</h2>
       
       {images.length === 0 ? (
-        <div className="text-center py-12 text-gray-700">
-          <p className="font-semibold mb-2">No visual assets found</p>
-          <p className="text-sm">Images will appear here after import</p>
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🖼️</div>
+          <p className="font-semibold text-lg text-gray-900 mb-2">No visual assets found</p>
+          <p className="text-sm text-gray-600 mb-4">Images will appear here after importing a Vision Session package with thumbnails</p>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 max-w-md mx-auto text-left">
+            <p className="text-xs text-gray-700 font-semibold mb-2">Debug Info:</p>
+            <p className="text-xs text-gray-600">Total assets: {totalAssets}</p>
+            <p className="text-xs text-gray-600">Asset types: {assetTypes || 'none'}</p>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

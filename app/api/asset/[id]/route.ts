@@ -109,7 +109,7 @@ export async function GET(
     <h1>${asset.title}</h1>
     <div class="meta" style="color: #666; font-size: 14px;">${asset.assetType || 'Image'}</div>
     <div class="actions">
-      <button class="btn btn-secondary" onclick="window.history.back()">← Back</button>
+      <button class="btn btn-secondary" onclick="handleBack()">← Back</button>
       <a class="btn btn-primary" href="/api/asset/${asset.id}?mode=download" download="${filename}">💾 Download</a>
     </div>
   </div>
@@ -117,6 +117,16 @@ export async function GET(
   <div class="image-container">
     <img src="data:${mimeType};base64,${base64}" alt="${asset.title}" />
   </div>
+  
+  <script>
+    function handleBack() {
+      if (document.referrer && document.referrer.includes('session/')) {
+        window.location.href = document.referrer;
+      } else {
+        window.history.back();
+      }
+    }
+  </script>
 </body>
 </html>
         `
@@ -221,7 +231,7 @@ export async function GET(
   </div>
   
   <div class="actions">
-    <button class="btn btn-secondary" onclick="if(document.referrer){window.location.href=document.referrer}else{window.history.back()}">← Back</button>
+    <button class="btn btn-secondary" onclick="handleBack()">← Back</button>
     <button class="btn btn-primary" onclick="copyContent()">📋 Copy</button>
     <a class="btn btn-primary" href="/api/asset/${asset.id}?mode=download" download="${filename}">💾 Download</a>
   </div>
@@ -234,6 +244,14 @@ export async function GET(
       navigator.clipboard.writeText(content).then(() => {
         alert('Copied to clipboard!');
       });
+    }
+    
+    function handleBack() {
+      if (document.referrer && document.referrer.includes('session/')) {
+        window.location.href = document.referrer;
+      } else {
+        window.history.back();
+      }
     }
   </script>
 </body>
