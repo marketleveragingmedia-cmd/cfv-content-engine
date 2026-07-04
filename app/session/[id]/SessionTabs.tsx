@@ -1,4 +1,5 @@
-import { VisualAssetsTab } from './VisualAssets'
+'use client'
+
 import { useState } from 'react'
 
 const TABS = [
@@ -179,39 +180,6 @@ function NotebookLMTab({ session }: { session: any }) {
         ) : (
           <p className="text-gray-700 text-sm">No instructions available</p>
         )}
-      </div>
-    </div>
-  )
-}
-
-function VisualAssetsTab({ session }: { session: any }) {
-  const images = session.assets.filter((a: any) => a.mimeType?.startsWith('image/'))
-  const categories = [...new Set(session.checklistItems.map((i: any) => i.category))] as string[]
-  
-  return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Publishing Checklist</h2>
-      
-      <div className="space-y-6">
-        {categories.map(category => {
-          const items = session.checklistItems.filter((i: any) => i.category === category)
-          const completed = items.filter((i: any) => i.completed).length
-          
-          return (
-            <div key={category} className="bg-white border border-gray-200 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="font-bold">{category}</h3>
-                <span className="text-sm text-gray-900 font-semibold">{completed}/{items.length}</span>
-              </div>
-              
-              <div className="space-y-2">
-                {items.map((item: any) => (
-                  <ChecklistEditor key={item.id} item={item} />
-                ))}
-              </div>
-            </div>
-          )
-        })}
       </div>
     </div>
   )
