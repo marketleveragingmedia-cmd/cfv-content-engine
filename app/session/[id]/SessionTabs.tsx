@@ -371,34 +371,34 @@ function LinksTab({ session }: { session: any }) {
   
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Links & Versions</h2>
+      <h2 className="text-xl md:text-2xl font-bold mb-4">Links & Versions</h2>
       
       <div className="space-y-4">
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="font-bold mb-2">Original Package</h3>
-          <p className="text-sm text-gray-900 font-semibold mb-3">{session.originalZipFilename || 'No original package'}</p>
+          <h3 className="font-bold mb-2 text-base md:text-lg">Original Package</h3>
+          <p className="text-sm text-gray-900 font-semibold mb-3 break-words">{session.originalZipFilename || 'No original package'}</p>
           <button 
             onClick={downloadOriginalZip}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold text-sm transition"
+            className="w-full md:w-auto px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold text-sm transition"
           >
             💾 Download Original ZIP
           </button>
         </div>
         
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="font-bold mb-3">Export Session</h3>
+          <h3 className="font-bold mb-3 text-base md:text-lg">Export Session</h3>
           <p className="text-sm text-gray-700 mb-3">Download all assets as a complete package</p>
           <Link 
             href={`/api/session/${session.sessionId}/export`}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold inline-block transition"
+            className="block text-center md:inline-block px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold transition"
           >
             💾 Download Complete Package
           </Link>
         </div>
         
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="font-bold mb-3">Publishing Matrix</h3>
-          <div className="space-y-1">
+          <h3 className="font-bold mb-3 text-base md:text-lg">Publishing Matrix</h3>
+          <div className="divide-y divide-gray-100">
             {session.publishingMatrix.map((item: any) => (
               <PublishingEditor key={item.id} item={item} />
             ))}
