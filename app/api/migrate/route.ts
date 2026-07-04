@@ -57,9 +57,56 @@ export async function GET() {
       CREATE INDEX IF NOT EXISTS "ChecklistItem_founderReview_idx" ON "ChecklistItem"("founderReview");
     `)
     
+    // Create ZipVersion table if it doesn't exist
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS "ZipVersion" (
+        "id" TEXT NOT NULL,
+        "sessionId" TEXT NOT NULL,
+        "version" INTEGER NOT NULL,
+        "isCurrent" BOOLEAN NOT NULL DEFAULT false,
+        "zipPath" TEXT NOT NULL,
+        "zipFilename" TEXT NOT NULL,
+        "zipSizeBytes" BIGINT,
+        "uploadedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "uploadedBy" TEXT NOT NULL DEFAULT 'system',
+        "replaceStrategy" TEXT,
+        "notes" TEXT,
+        "assetsAdded" INTEGER NOT NULL DEFAULT 0,
+        "assetsUpdated" INTEGER NOT NULL DEFAULT 0,
+        "assetsRemoved" INTEGER NOT NULL DEFAULT 0,
+        CONSTRAINT "ZipVersion_pkey" PRIMARY KEY ("id")
+      );
+    `)
+    
+    // Add foreign key if table was just created
+    await prisma.$executeRawUnsafe(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'ZipVersion_sessionId_fkey'
+        ) THEN
+          ALTER TABLE "ZipVersion" ADD CONSTRAINT "ZipVersion_sessionId_fkey" 
+            FOREIGN KEY ("sessionId") REFERENCES "VisionSession"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        END IF;
+      END $$;
+    `)
+    
+    // Create ZipVersion indexes
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "ZipVersion_sessionId_idx" ON "ZipVersion"("sessionId");
+    `)
+    
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "ZipVersion_version_idx" ON "ZipVersion"("version");
+    `)
+    
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "ZipVersion_isCurrent_idx" ON "ZipVersion"("isCurrent");
+    `)
+    
     return NextResponse.json({ 
       success: true, 
-      message: 'Migration applied successfully. All new columns added.' 
+      message: 'Migration applied successfully. All new columns and tables added.' 
     })
   } catch (error: any) {
     console.error('Migration error:', error)
