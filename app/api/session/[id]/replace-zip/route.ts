@@ -40,8 +40,8 @@ export async function POST(
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
-    // Save uploaded ZIP
-    const uploadsDir = join(process.cwd(), 'uploads', 'zips')
+    // Save uploaded ZIP to /tmp (Vercel-compatible)
+    const uploadsDir = '/tmp/cfv-imports'
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
     }
