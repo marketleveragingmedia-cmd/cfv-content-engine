@@ -53,25 +53,18 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             ← Back to All Sessions
           </Link>
           
-          <div className="flex items-start justify-between mb-6">
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2" style={{color: 'var(--green-primary)'}}>
-                {session.finalTitle || session.workingTitle || session.theme}
-              </h1>
-              <p className="text-base" style={{color: 'var(--text-secondary)'}}>
-                <span className="font-semibold">{session.sessionId}</span> • {session.category || 'Mindset / Movement Foundation'}
-              </p>
-            </div>
-            
-            <div className="flex gap-3 items-start">
-              <a
-                href={`/api/session/${session.id}/export?format=pdf`}
-                className="px-5 py-2.5 text-white rounded-lg font-semibold transition shadow-sm hover:shadow-md"
-                style={{background: 'linear-gradient(135deg, #2D8659 0%, #1F7A47 100%)'}}
-              >
-                📥 Download PDF
-              </a>
-              <span className={`px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap ${
+          <div className="mb-6">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <h1 className="text-2xl md:text-3xl font-bold mb-2" style={{color: 'var(--green-primary)'}}>
+                  {session.finalTitle || session.workingTitle || session.theme}
+                </h1>
+                <p className="text-sm md:text-base" style={{color: 'var(--text-secondary)'}}>
+                  <span className="font-semibold">{session.sessionId}</span> • {session.category || 'Mindset / Movement Foundation'}
+                </p>
+              </div>
+              
+              <span className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap ml-3 ${
                 session.status === 'published' ? 'bg-green-100 text-green-700' :
                 session.status === 'ready-to-publish' ? 'bg-blue-100 text-blue-700' :
                 session.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' :
@@ -80,6 +73,14 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
                 {session.status.replace(/-/g, ' ').toUpperCase()}
               </span>
             </div>
+            
+            <a
+              href={`/api/session/${session.id}/export?format=pdf`}
+              className="inline-block px-4 py-2 text-white rounded-lg font-semibold transition text-sm"
+              style={{background: 'linear-gradient(135deg, #2D8659 0%, #1F7A47 100%)'}}
+            >
+              ⬇️ PDF
+            </a>
           </div>
           
           {/* Meta Grid */}

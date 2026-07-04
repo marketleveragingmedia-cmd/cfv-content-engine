@@ -160,8 +160,8 @@ function NotebookLMTab({ session }: { session: any }) {
         {source ? (
           <div className="flex gap-2">
             <button className="px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-sm transition">View</button>
-            <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">Copy</button>
-            <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">Download</button>
+            <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">Copy</button>
+            <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">Download</button>
           </div>
         ) : (
           <p className="text-gray-700 text-sm">No source document available</p>
@@ -174,8 +174,8 @@ function NotebookLMTab({ session }: { session: any }) {
         {instructions ? (
           <div className="flex gap-2">
             <button className="px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-sm transition">View</button>
-            <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">Copy</button>
-            <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">Download</button>
+            <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">Copy</button>
+            <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">Download</button>
           </div>
         ) : (
           <p className="text-gray-700 text-sm">No instructions available</p>
@@ -200,13 +200,13 @@ function VisualAssetsTab({ session }: { session: any }) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {images.map((image: any) => (
             <div key={image.id} className="bg-white border border-gray-200 rounded-lg p-3">
-              <div className="aspect-video bg-gray-900 rounded mb-2 flex items-center justify-center">
+              <div className="aspect-video bg-gray-100 rounded mb-2 flex items-center justify-center">
                 <span className="text-4xl">🖼️</span>
               </div>
               <p className="text-sm font-semibold mb-2">{image.title}</p>
               <div className="flex gap-2">
-                <button className="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-xs transition">View</button>
-                <button className="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-xs transition">Download</button>
+                <button className="px-2 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs transition">View</button>
+                <button className="px-2 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs transition">Download</button>
               </div>
             </div>
           ))}
@@ -262,7 +262,7 @@ function LinksTab({ session }: { session: any }) {
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <h3 className="font-bold mb-2">Original Package</h3>
           <p className="text-sm text-gray-600 mb-2">{session.originalZipFilename}</p>
-          <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">
+          <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">
             Download Original ZIP
           </button>
         </div>
