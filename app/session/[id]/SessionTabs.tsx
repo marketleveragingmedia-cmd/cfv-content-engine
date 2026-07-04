@@ -273,3 +273,93 @@ function Field({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
+}
+
+import { PublishingEditor } from './PublishingEditor'
+import Link from 'next/link'
+
+function LinksTab({ session }: { session: any }) {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold mb-4">Links & Versions</h2>
+      
+      <div className="space-y-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="font-bold mb-2">Original Package</h3>
+          <p className="text-sm text-gray-900 font-semibold mb-2">{session.originalZipFilename}</p>
+          <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">
+            Download Original ZIP
+          </button>
+        </div>
+        
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="font-bold mb-3">Export Session</h3>
+          <Link href={`/api/session/${session.sessionId}/export`} className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded inline-block">
+            Download Complete Package
+          </Link>
+        </div>
+        
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="font-bold mb-3">Publishing Matrix</h3>
+          <div className="space-y-1">
+            {session.publishingMatrix.map((item: any) => (
+              <PublishingEditor key={item.id} item={item} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AuditTab({ session }: { session: any }) {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold mb-4">Import / Audit Log</h2>
+      
+      {session.imports.length === 0 ? (
+        <p className="text-gray-700">No import history</p>
+      ) : (
+        <div className="space-y-3">
+          {session.imports.map((log: any) => (
+            <div key={log.id} className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="font-semibold">{log.importType.replace(/_/g, ' ')}</p>
+                  <p className="text-sm text-gray-900 font-semibold">{log.zipFilename}</p>
+                </div>
+                <span className="text-xs text-gray-700">
+                  {new Date(log.importedAt).toLocaleString()}
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4 text-sm mt-3">
+                <div>
+                  <span className="text-gray-700">Imported:</span>
+                  <span className="ml-2 font-semibold">{log.assetsImported}</span>
+                </div>
+                <div>
+                  <span className="text-gray-700">Missing:</span>
+                  <span className="ml-2 font-semibold">{log.assetsMissing}</span>
+                </div>
+                <div>
+                  <span className="text-gray-700">Unclassified:</span>
+                  <span className="ml-2 font-semibold">{log.assetsUnclassified}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-900 font-semibold mb-1">{label}</label>
+      <p className="text-gray-200">{value}</p>
+    </div>
+  )
+}
