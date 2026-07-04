@@ -45,13 +45,13 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
       <div className="max-w-5xl mx-auto">
         {/* Header Card */}
         <div className="bg-white rounded-xl shadow-md p-8 mb-6">
-          <Link 
+          <a 
             href="/sessions"
-            className="inline-block mb-6 font-semibold hover:underline"
+            className="inline-block mb-6 font-semibold hover:underline cursor-pointer"
             style={{color: 'var(--green-primary)'}}
           >
             ← Back to All Sessions
-          </Link>
+          </a>
           
           <div className="mb-6">
             <div className="flex items-start justify-between mb-3">

@@ -100,7 +100,7 @@ export async function GET(
   </div>
   
   <div class="actions">
-    <button class="btn btn-secondary" onclick="window.history.back()">← Back</button>
+    <button class="btn btn-secondary" onclick="if(document.referrer){window.location.href=document.referrer}else{window.history.back()}">← Back</button>
     <button class="btn btn-primary" onclick="copyContent()">📋 Copy</button>
     <a class="btn btn-primary" href="/api/asset/${asset.id}?mode=download" download="${filename}">💾 Download</a>
   </div>
