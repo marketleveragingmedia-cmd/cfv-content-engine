@@ -185,77 +185,28 @@ function NotebookLMTab({ session }: { session: any }) {
   )
 }
 
-import { PublishingEditor } from './PublishingEditor'
-import Link from 'next/link'
-
-function LinksTab({ session }: { session: any }) {
+function VisualAssetsTab({ session }: { session: any }) {
+  const images = session.assets.filter((a: any) => a.mimeType?.startsWith('image/'))
+  
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Links & Versions</h2>
+      <h2 className="text-2xl font-bold mb-4">Visual Assets</h2>
       
-      <div className="space-y-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="font-bold mb-2">Original Package</h3>
-          <p className="text-sm text-gray-900 font-semibold mb-2">{session.originalZipFilename}</p>
-          <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">
-            Download Original ZIP
-          </button>
+      {images.length === 0 ? (
+        <div className="text-center py-12 text-gray-700">
+          <p>No visual assets found</p>
         </div>
-        
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="font-bold mb-3">Export Session</h3>
-          <Link href={`/api/session/${session.sessionId}/export`} className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded inline-block">
-            Download Complete Package
-          </Link>
-        </div>
-        
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="font-bold mb-3">Publishing Matrix</h3>
-          <div className="space-y-1">
-            {session.publishingMatrix.map((item: any) => (
-              <PublishingEditor key={item.id} item={item} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function AuditTab({ session }: { session: any }) {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Import / Audit Log</h2>
-      
-      {session.imports.length === 0 ? (
-        <p className="text-gray-700">No import history</p>
       ) : (
-        <div className="space-y-3">
-          {session.imports.map((log: any) => (
-            <div key={log.id} className="bg-white border border-gray-200 rounded-lg p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <p className="font-semibold">{log.importType.replace(/_/g, ' ')}</p>
-                  <p className="text-sm text-gray-900 font-semibold">{log.zipFilename}</p>
-                </div>
-                <span className="text-xs text-gray-700">
-                  {new Date(log.importedAt).toLocaleString()}
-                </span>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {images.map((image: any) => (
+            <div key={image.id} className="bg-white border border-gray-200 rounded-lg p-3">
+              <div className="aspect-video bg-gray-100 rounded mb-2 flex items-center justify-center">
+                <span className="text-4xl">🖼️</span>
               </div>
-              
-              <div className="grid grid-cols-3 gap-4 text-sm mt-3">
-                <div>
-                  <span className="text-gray-700">Imported:</span>
-                  <span className="ml-2 font-semibold">{log.assetsImported}</span>
-                </div>
-                <div>
-                  <span className="text-gray-700">Missing:</span>
-                  <span className="ml-2 font-semibold">{log.assetsMissing}</span>
-                </div>
-                <div>
-                  <span className="text-gray-700">Unclassified:</span>
-                  <span className="ml-2 font-semibold">{log.assetsUnclassified}</span>
-                </div>
+              <p className="text-sm font-semibold mb-2">{image.title}</p>
+              <div className="flex gap-2">
+                <button className="px-2 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs transition">View</button>
+                <button className="px-2 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs transition">Download</button>
               </div>
             </div>
           ))}
@@ -265,11 +216,36 @@ function AuditTab({ session }: { session: any }) {
   )
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+import { ChecklistEditor } from './ChecklistEditor'
+
+function ChecklistTab({ session }: { session: any }) {
+  const categories = [...new Set(session.checklistItems.map((i: any) => i.category))] as string[]
+  
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-900 font-semibold mb-1">{label}</label>
-      <p className="text-gray-200">{value}</p>
+      <h2 className="text-2xl font-bold mb-4">Publishing Checklist</h2>
+      
+      <div className="space-y-6">
+        {categories.map(category => {
+          const items = session.checklistItems.filter((i: any) => i.category === category)
+          const completed = items.filter((i: any) => i.completed).length
+          
+          return (
+            <div key={category} className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-bold">{category}</h3>
+                <span className="text-sm text-gray-900 font-semibold">{completed}/{items.length}</span>
+              </div>
+              
+              <div className="space-y-2">
+                {items.map((item: any) => (
+                  <ChecklistEditor key={item.id} item={item} />
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
