@@ -186,7 +186,26 @@ function NotebookLMTab({ session }: { session: any }) {
 }
 
 function VisualAssetsTab({ session }: { session: any }) {
-  const images = session.assets.filter((a: any) => a.mimeType?.startsWith('image/'))
+  // Try multiple possible image filters
+  const images = session.assets.filter((a: any) => 
+    a.assetType === 'Image' || 
+    a.mimeType?.startsWith('image/') ||
+    a.tab === 'Visual Assets' ||
+    a.title?.toLowerCase().includes('thumbnail')
+  )
+  
+  const handleView = (imageId: string) => {
+    window.open(`/api/asset/${imageId}?mode=view`, '_blank')
+  }
+  
+  const handleDownload = (imageId: string, title: string) => {
+    const link = document.createElement('a')
+    link.href = `/api/asset/${imageId}?mode=download`
+    link.download = `${title.replace(/[^a-z0-9]/gi, '_')}.jpg`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
   
   return (
     <div>
@@ -194,19 +213,48 @@ function VisualAssetsTab({ session }: { session: any }) {
       
       {images.length === 0 ? (
         <div className="text-center py-12 text-gray-700">
-          <p>No visual assets found</p>
+          <p className="font-semibold mb-2">No visual assets found</p>
+          <p className="text-sm">Images will appear here after import</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {images.map((image: any) => (
             <div key={image.id} className="bg-white border border-gray-200 rounded-lg p-3">
-              <div className="aspect-video bg-gray-100 rounded mb-2 flex items-center justify-center">
+              {image.filePath ? (
+                <img 
+                  src={image.filePath}
+                  alt={image.title}
+                  className="aspect-video w-full object-cover rounded mb-2 cursor-pointer hover:opacity-90 transition"
+                  onClick={() => handleView(image.id)}
+                  onError={(e) => {
+                    // Fallback to icon if image fails to load
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                    const fallback = target.nextElementSibling as HTMLElement
+                    if (fallback) fallback.style.display = 'flex'
+                  }}
+                />
+              ) : null}
+              <div 
+                className="aspect-video bg-gray-100 rounded mb-2 items-center justify-center"
+                style={{ display: image.filePath ? 'none' : 'flex' }}
+              >
                 <span className="text-4xl">🖼️</span>
               </div>
-              <p className="text-sm font-semibold mb-2">{image.title}</p>
+              <p className="text-sm font-semibold mb-2 text-gray-900">{image.title}</p>
               <div className="flex gap-2">
-                <button className="px-2 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs transition">View</button>
-                <button className="px-2 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs transition">Download</button>
+                <button 
+                  onClick={() => handleView(image.id)}
+                  className="flex-1 px-2 py-1.5 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-xs font-semibold transition"
+                >
+                  👁️ View
+                </button>
+                <button 
+                  onClick={() => handleDownload(image.id, image.title)}
+                  className="flex-1 px-2 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded text-xs font-semibold transition"
+                >
+                  💾 Download
+                </button>
               </div>
             </div>
           ))}
@@ -254,6 +302,14 @@ import { PublishingEditor } from './PublishingEditor'
 import Link from 'next/link'
 
 function LinksTab({ session }: { session: any }) {
+  const downloadOriginalZip = () => {
+    if (!session.originalZipUrl) {
+      alert('Original ZIP file not available')
+      return
+    }
+    window.location.href = session.originalZipUrl
+  }
+  
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Links & Versions</h2>
@@ -261,16 +317,23 @@ function LinksTab({ session }: { session: any }) {
       <div className="space-y-4">
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <h3 className="font-bold mb-2">Original Package</h3>
-          <p className="text-sm text-gray-900 font-semibold mb-2">{session.originalZipFilename}</p>
-          <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">
-            Download Original ZIP
+          <p className="text-sm text-gray-900 font-semibold mb-3">{session.originalZipFilename || 'No original package'}</p>
+          <button 
+            onClick={downloadOriginalZip}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold text-sm transition"
+          >
+            💾 Download Original ZIP
           </button>
         </div>
         
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <h3 className="font-bold mb-3">Export Session</h3>
-          <Link href={`/api/session/${session.sessionId}/export`} className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded inline-block">
-            Download Complete Package
+          <p className="text-sm text-gray-700 mb-3">Download all assets as a complete package</p>
+          <Link 
+            href={`/api/session/${session.sessionId}/export`}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold inline-block transition"
+          >
+            💾 Download Complete Package
           </Link>
         </div>
         
@@ -333,8 +396,8 @@ function AuditTab({ session }: { session: any }) {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-900 font-semibold mb-1">{label}</label>
-      <p className="text-gray-200">{value}</p>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
+      <p className="text-gray-900 font-semibold">{value}</p>
     </div>
   )
 }
