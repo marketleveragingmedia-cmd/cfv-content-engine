@@ -120,10 +120,17 @@ export async function GET(
   
   <script>
     function handleBack() {
-      if (document.referrer && document.referrer.includes('session/')) {
+      // Try to get session ID from the asset data or build from referrer
+      const sessionMatch = document.referrer.match(/\/session\/([^\/\?]+)/);
+      if (sessionMatch && sessionMatch[1]) {
+        // Go back to the session page we came from
+        window.location.href = '/session/' + sessionMatch[1];
+      } else if (document.referrer && document.referrer.includes('/session')) {
+        // Fallback to referrer if it's a session page
         window.location.href = document.referrer;
       } else {
-        window.history.back();
+        // Last resort: go to sessions list
+        window.location.href = '/sessions';
       }
     }
   </script>
@@ -247,10 +254,17 @@ export async function GET(
     }
     
     function handleBack() {
-      if (document.referrer && document.referrer.includes('session/')) {
+      // Try to get session ID from the asset data or build from referrer
+      const sessionMatch = document.referrer.match(/\/session\/([^\/\?]+)/);
+      if (sessionMatch && sessionMatch[1]) {
+        // Go back to the session page we came from
+        window.location.href = '/session/' + sessionMatch[1];
+      } else if (document.referrer && document.referrer.includes('/session')) {
+        // Fallback to referrer if it's a session page
         window.location.href = document.referrer;
       } else {
-        window.history.back();
+        // Last resort: go to sessions list
+        window.location.href = '/sessions';
       }
     }
   </script>

@@ -22,37 +22,77 @@ const TABS = [
 
 export default function SessionTabs({ session }: { session: any }) {
   const [activeTab, setActiveTab] = useState('checklist')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   
   const activeTabData = TABS.find(t => t.id === activeTab)
   
   return (
-    <div className="flex gap-6">
-      {/* Left Sidebar Navigation */}
-      <div className="w-64 flex-shrink-0">
-        <div className="bg-white rounded-lg shadow-sm p-3 sticky top-4">
-          <h3 className="text-sm font-bold text-gray-700 mb-3 px-3">SECTIONS</h3>
-          <nav className="space-y-1">
-            {TABS.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg font-semibold transition text-sm flex items-center gap-2 ${
-                  activeTab === tab.id
-                    ? 'bg-green-600 text-white shadow-sm'
-                    : 'text-gray-700 hover:bg-green-50 hover:text-green-700'
-                }`}
-              >
-                <span className="text-lg">{tab.icon}</span>
-                <span className="flex-1">{tab.label}</span>
-              </button>
-            ))}
-          </nav>
-        </div>
+    <div>
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden mb-4">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="w-full bg-white rounded-lg shadow-sm p-4 flex items-center justify-between font-semibold text-gray-900"
+        >
+          <span className="flex items-center gap-2">
+            <span className="text-lg">{activeTabData?.icon}</span>
+            <span>{activeTabData?.label}</span>
+          </span>
+          <span className="text-2xl">{sidebarOpen ? '✕' : '☰'}</span>
+        </button>
+        
+        {sidebarOpen && (
+          <div className="bg-white rounded-lg shadow-sm p-3 mt-2 max-h-96 overflow-y-auto">
+            <nav className="space-y-1">
+              {TABS.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    setSidebarOpen(false)
+                  }}
+                  className={`w-full text-left px-3 py-2.5 rounded-lg font-semibold transition text-sm flex items-center gap-2 ${
+                    activeTab === tab.id
+                      ? 'bg-green-600 text-white shadow-sm'
+                      : 'text-gray-700 hover:bg-green-50 hover:text-green-700'
+                  }`}
+                >
+                  <span className="text-lg">{tab.icon}</span>
+                  <span className="flex-1">{tab.label}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+        )}
       </div>
       
-      {/* Main Content Area */}
-      <div className="flex-1 min-w-0">
-        <div className="bg-white rounded-lg shadow-sm p-6 min-h-[400px]">
+      <div className="flex gap-6">
+        {/* Desktop Left Sidebar Navigation */}
+        <div className="hidden lg:block w-64 flex-shrink-0">
+          <div className="bg-white rounded-lg shadow-sm p-3 sticky top-4">
+            <h3 className="text-sm font-bold text-gray-700 mb-3 px-3">SECTIONS</h3>
+            <nav className="space-y-1">
+              {TABS.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-full text-left px-3 py-2.5 rounded-lg font-semibold transition text-sm flex items-center gap-2 ${
+                    activeTab === tab.id
+                      ? 'bg-green-600 text-white shadow-sm'
+                      : 'text-gray-700 hover:bg-green-50 hover:text-green-700'
+                  }`}
+                >
+                  <span className="text-lg">{tab.icon}</span>
+                  <span className="flex-1">{tab.label}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+        
+        {/* Main Content Area */}
+        <div className="flex-1 min-w-0">
+          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 min-h-[400px]">
         {activeTab === 'overview' && <OverviewTab session={session} />}
         {activeTab === 'transcript' && <AssetTab session={session} tab="Transcript" />}
         {activeTab === 'core-message' && <AssetTab session={session} tab="Core Message" />}
@@ -68,6 +108,7 @@ export default function SessionTabs({ session }: { session: any }) {
         {activeTab === 'checklist' && <ChecklistTab session={session} />}
         {activeTab === 'links' && <LinksTab session={session} />}
         {activeTab === 'audit' && <AuditTab session={session} />}
+          </div>
         </div>
       </div>
     </div>

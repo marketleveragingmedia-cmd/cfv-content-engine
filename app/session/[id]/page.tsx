@@ -41,22 +41,22 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   }
   
   return (
-    <div className="min-h-screen py-8 px-4">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen py-4 md:py-8 px-2 md:px-4">
+      <div className="max-w-7xl mx-auto">
         {/* Header Card */}
-        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-8 mb-4 md:mb-6">
           <a 
             href="/sessions"
-            className="inline-block mb-6 font-semibold hover:underline cursor-pointer"
+            className="inline-block mb-4 md:mb-6 font-semibold hover:underline cursor-pointer text-sm md:text-base"
             style={{color: 'var(--green-primary)'}}
           >
             ← Back to All Sessions
           </a>
           
-          <div className="mb-6">
-            <div className="flex items-start justify-between mb-3">
+          <div className="mb-4 md:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
               <div className="flex-1">
-                <h1 className="text-2xl md:text-3xl font-bold mb-2" style={{color: 'var(--green-primary)'}}>
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2" style={{color: 'var(--green-primary)'}}>
                   {session.finalTitle || session.workingTitle || session.theme}
                 </h1>
                 <p className="text-sm md:text-base" style={{color: 'var(--text-secondary)'}}>
