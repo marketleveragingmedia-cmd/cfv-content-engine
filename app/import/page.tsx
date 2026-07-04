@@ -81,6 +81,22 @@ export default function ImportPage() {
               </p>
             </div>
 
+            <div>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="updateExisting"
+                  value="true"
+                  disabled={uploading}
+                  className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                />
+                <div>
+                  <div className="text-sm font-semibold text-gray-700">Update Existing Session (if same ID)</div>
+                  <div className="text-xs text-gray-500">If a session with the same ID exists, update it instead of creating a duplicate</div>
+                </div>
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={uploading}

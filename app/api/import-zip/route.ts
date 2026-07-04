@@ -7,6 +7,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File
+    const updateExisting = formData.get('updateExisting') === 'true'
     
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
@@ -24,8 +25,8 @@ export async function POST(req: NextRequest) {
     const tempPath = path.join(tempDir, file.name)
     fs.writeFileSync(tempPath, buffer)
     
-    // Process the ZIP
-    const result = await processVisionSessionZip(tempPath, file.name)
+    // Process the ZIP (with update mode if requested)
+    const result = await processVisionSessionZip(tempPath, file.name, updateExisting)
     
     // Clean up temp file
     fs.unlinkSync(tempPath)

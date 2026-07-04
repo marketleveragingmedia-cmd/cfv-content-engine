@@ -47,7 +47,8 @@ const TAB_MAPPING: Record<string, string> = {
 
 export async function processVisionSessionZip(
   zipPath: string,
-  zipFilename: string
+  zipFilename: string,
+  updateExisting: boolean = false
 ): Promise<ProcessResult> {
   const result: ProcessResult = {
     sessionId: '',
@@ -91,10 +92,14 @@ export async function processVisionSessionZip(
     }
     
     // Check if session ID already exists
+    let existingSession: any = null
     if (sessionId) {
-      const existing = await prisma.visionSession.findUnique({ where: { sessionId } })
-      if (existing) {
-        sessionId = undefined // Force generation of new ID
+      existingSession = await prisma.visionSession.findUnique({ 
+        where: { sessionId },
+        include: { assets: true }
+      })
+      if (existingSession && !updateExisting) {
+        sessionId = undefined // Force generation of new ID only if not updating
       }
     }
     
@@ -111,25 +116,37 @@ export async function processVisionSessionZip(
     
     result.sessionId = sessionId
 
-    // Create Vision Session
-    const session = await prisma.visionSession.create({
-      data: {
-        sessionId,
-        theme: manifest?.theme || 'Imported Session',
-        workingTitle: manifest?.workingTitle || zipFilename.replace('.zip', ''),
-        finalTitle: manifest?.finalTitle,
-        summary: manifest?.summary,
-        category: manifest?.category,
-        founderPathwayStage: manifest?.founderPathwayStage || 'Foundation',
-        primaryCTA: manifest?.primaryCTA,
-        creator: manifest?.creator || 'MzSamantha',
-        brand: manifest?.brand || 'Cash Flow Visionaries',
-        status: 'draft',
-        originalZipPath: zipPath,
-        originalZipFilename: zipFilename,
-        lastImportedAt: new Date()
-      }
-    })
+    // Create or Update Vision Session
+    const sessionData = {
+      sessionId,
+      theme: manifest?.theme || 'Imported Session',
+      workingTitle: manifest?.workingTitle || zipFilename.replace('.zip', ''),
+      finalTitle: manifest?.finalTitle,
+      summary: manifest?.summary,
+      category: manifest?.category,
+      founderPathwayStage: manifest?.founderPathwayStage || 'Foundation',
+      primaryCTA: manifest?.primaryCTA,
+      creator: manifest?.creator || 'MzSamantha',
+      brand: manifest?.brand || 'Cash Flow Visionaries',
+      status: 'draft',
+      originalZipPath: zipPath,
+      originalZipFilename: zipFilename,
+      lastImportedAt: new Date()
+    }
+
+    let session: any
+    if (existingSession && updateExisting) {
+      // Update existing session
+      session = await prisma.visionSession.update({
+        where: { id: existingSession.id },
+        data: sessionData
+      })
+      // Delete old assets if updating
+      await prisma.asset.deleteMany({ where: { sessionId: existingSession.id } })
+    } else {
+      // Create new session
+      session = await prisma.visionSession.create({ data: sessionData })
+    }
 
     // Create storage directory (use /tmp for Vercel serverless)
     const baseStorageDir = process.env.VERCEL ? '/tmp/cfv-storage' : join(process.cwd(), 'storage')
