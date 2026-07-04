@@ -167,7 +167,7 @@ function NextActionCard({ session, setActiveTab }: { session: any; setActiveTab:
         )}
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-2 md:gap-3">
         <button 
           onClick={() => {
             if (nextActionData?.assetTab) {
@@ -178,20 +178,30 @@ function NextActionCard({ session, setActiveTab }: { session: any; setActiveTab:
               window.scrollTo({ top: 0, behavior: 'smooth' })
             }
           }}
-          className="px-6 py-2 text-white font-semibold rounded-lg hover:opacity-90 transition"
+          className="px-4 md:px-6 py-2 text-white font-semibold rounded-lg hover:opacity-90 transition text-sm md:text-base"
           style={{background: '#1E8E5A'}}
         >
           {nextActionData?.assetTab ? 'Open Asset' : 'View Checklist'}
         </button>
         <button 
           onClick={() => {
+            setActiveTab('overview')
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+          className="px-4 md:px-6 py-2 bg-white border-2 font-semibold rounded-lg hover:bg-gray-50 transition text-sm md:text-base"
+          style={{borderColor: '#1E8E5A', color: '#1E8E5A'}}
+        >
+          📝 Edit Session Details
+        </button>
+        <button 
+          onClick={() => {
             setActiveTab('checklist')
             window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
-          className="px-6 py-2 bg-white border-2 font-semibold rounded-lg hover:bg-gray-50 transition"
-          style={{borderColor: '#1E8E5A', color: '#1E8E5A'}}
+          className="px-4 md:px-6 py-2 bg-white border-2 font-semibold rounded-lg hover:bg-gray-50 transition text-sm md:text-base"
+          style={{borderColor: '#C9A441', color: '#C9A441'}}
         >
-          Update Checklist
+          ✓ Mark Complete
         </button>
       </div>
     </div>

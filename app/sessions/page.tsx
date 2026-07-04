@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import { formatSessionTitle } from '@/lib/format-session-title'
 
 export const dynamic = 'force-dynamic'
 
@@ -151,7 +152,7 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
                   style={{borderColor: 'var(--border-color)'}}
                 >
                   <div className="font-semibold mb-2" style={{color: 'var(--green-primary)'}}>{session.sessionId}</div>
-                  <h3 className="text-lg font-bold mb-3" style={{color: 'var(--text-primary)'}}>{session.finalTitle || session.workingTitle || session.theme}</h3>
+                  <h3 className="text-lg font-bold mb-3" style={{color: 'var(--text-primary)'}}>{formatSessionTitle(session)}</h3>
                   
                   <div className="flex gap-4 text-sm mb-3" style={{color: 'var(--text-secondary)'}}>
                     <span>📂 {session.category || 'Uncategorized'}</span>

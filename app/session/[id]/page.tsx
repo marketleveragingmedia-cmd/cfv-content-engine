@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import SessionTabs from './SessionTabs'
 import { ReplacePackageButton } from './ReplacePackageButton'
+import { formatSessionTitle } from '@/lib/format-session-title'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,7 +64,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
               <div className="flex-1">
                 <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2" style={{color: 'var(--green-primary)'}}>
-                  {session.finalTitle || session.workingTitle || session.theme}
+                  {formatSessionTitle(session)}
                 </h1>
                 <p className="text-sm md:text-base" style={{color: 'var(--text-secondary)'}}>
                   <span className="font-semibold">{session.sessionId}</span> • {session.category || 'Mindset / Movement Foundation'}

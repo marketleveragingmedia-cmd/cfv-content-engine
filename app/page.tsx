@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { FounderReadinessMeter } from '@/components/FounderReadinessMeter'
+import { formatSessionTitle } from '@/lib/format-session-title'
 
 export const dynamic = 'force-dynamic'
 
@@ -175,7 +176,7 @@ export default async function HomePage() {
                       {session.sessionId}
                     </div>
                     <h3 className="text-lg font-bold mb-3" style={{color: 'var(--text-primary)'}}>
-                      {session.finalTitle || session.workingTitle || session.theme}
+                      {formatSessionTitle(session)}
                     </h3>
                     
                     <div className="flex gap-4 text-sm mb-3" style={{color: 'var(--text-secondary)'}}>

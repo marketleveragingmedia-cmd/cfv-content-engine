@@ -160,11 +160,27 @@ export function calculateAssetReadiness(
 }
 
 function getTranscriptReadiness(items: ChecklistItem[], assets: any[]): AssetReadiness {
-  const transcriptAssets = assets.filter(a => 
-    a.tab === 'Transcript' || a.assetType?.includes('transcript')
-  )
+  // Check for any transcript assets - be flexible with naming
+  const transcriptAssets = assets.filter(a => {
+    const assetTypeLower = (a.assetType || '').toLowerCase()
+    const tabLower = (a.tab || '').toLowerCase()
+    const titleLower = (a.title || '').toLowerCase()
+    
+    return tabLower.includes('transcript') || 
+           assetTypeLower.includes('transcript') ||
+           titleLower.includes('transcript')
+  })
   
-  const hasCleanTranscript = transcriptAssets.some(a => a.assetType?.includes('clean'))
+  if (transcriptAssets.length === 0) {
+    return { label: 'Transcript', status: 'Missing', color: 'gray', tooltip: 'No transcript found' }
+  }
+  
+  const hasCleanTranscript = transcriptAssets.some(a => {
+    const assetTypeLower = (a.assetType || '').toLowerCase()
+    const titleLower = (a.title || '').toLowerCase()
+    return assetTypeLower.includes('clean') || titleLower.includes('clean')
+  })
+  
   const isApproved = transcriptAssets.some(a => a.approved)
   
   if (isApproved) {
@@ -172,10 +188,10 @@ function getTranscriptReadiness(items: ChecklistItem[], assets: any[]): AssetRea
   }
   
   if (hasCleanTranscript) {
-    return { label: 'Transcript', status: 'Needs Review', color: 'yellow', tooltip: 'Clean transcript needs approval' }
+    return { label: 'Transcript', status: 'Ready', color: 'green', tooltip: `Clean transcript available (${transcriptAssets.length} asset${transcriptAssets.length > 1 ? 's' : ''})` }
   }
   
-  return { label: 'Transcript', status: 'Missing', color: 'gray', tooltip: 'No transcript found' }
+  return { label: 'Transcript', status: 'Needs Review', color: 'yellow', tooltip: `Transcript found, needs cleanup (${transcriptAssets.length} asset${transcriptAssets.length > 1 ? 's' : ''})` }
 }
 
 function getYouTubeLongFormReadiness(items: ChecklistItem[], assets: any[]): AssetReadiness {
@@ -279,8 +295,23 @@ function getSKOOLReadiness(items: ChecklistItem[], assets: any[]): AssetReadines
 }
 
 function getNotebookLMReadiness(items: ChecklistItem[], assets: any[]): AssetReadiness {
-  const notebookAssets = assets.filter(a => a.assetType?.includes('notebooklm'))
-  const hasSource = notebookAssets.some(a => a.assetType === 'notebooklm_source')
+  // Check for NotebookLM assets - be flexible with naming
+  const notebookAssets = assets.filter(a => {
+    const assetTypeLower = (a.assetType || '').toLowerCase()
+    const tabLower = (a.tab || '').toLowerCase()
+    const titleLower = (a.title || '').toLowerCase()
+    
+    return assetTypeLower.includes('notebooklm') ||
+           tabLower.includes('notebooklm') ||
+           titleLower.includes('notebooklm')
+  })
+  
+  const hasSource = notebookAssets.some(a => {
+    const assetTypeLower = (a.assetType || '').toLowerCase()
+    const titleLower = (a.title || '').toLowerCase()
+    return assetTypeLower.includes('source') || titleLower.includes('source')
+  })
+  
   const notebookItems = items.filter(i => i.category === 'NotebookLM')
   const hasUploaded = notebookItems.some(i => i.status === 'Published')
   
@@ -288,8 +319,8 @@ function getNotebookLMReadiness(items: ChecklistItem[], assets: any[]): AssetRea
     return { label: 'NotebookLM', status: 'Uploaded', color: 'green', tooltip: 'Source uploaded to NotebookLM' }
   }
   
-  if (hasSource) {
-    return { label: 'NotebookLM', status: 'Source Ready', color: 'blue', tooltip: 'Ready to upload' }
+  if (hasSource || notebookAssets.length > 0) {
+    return { label: 'NotebookLM', status: 'Source Ready', color: 'green', tooltip: `Source file ready (${notebookAssets.length} asset${notebookAssets.length > 1 ? 's' : ''})` }
   }
   
   return { label: 'NotebookLM', status: 'Missing', color: 'gray', tooltip: 'No NotebookLM source yet' }
