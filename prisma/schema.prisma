@@ -49,6 +49,7 @@ model VisionSession {
   checklistItems        ChecklistItem[]
   publishingMatrix      PublishingMatrixItem[]
   imports               ImportLog[]
+  zipVersions           ZipVersion[]
   
   @@index([sessionId])
   @@index([status])
@@ -184,4 +185,35 @@ model ImportLog {
   
   @@index([sessionId])
   @@index([importedAt])
+}
+
+// ZIP Version History - Track package replacements
+model ZipVersion {
+  id                String   @id @default(cuid())
+  sessionId         String
+  session           VisionSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  // Version info
+  version           Int      // 1, 2, 3, etc.
+  isCurrent         Boolean  @default(false)  // Only one current version per session
+  
+  // ZIP details
+  zipPath           String
+  zipFilename       String
+  zipSizeBytes      BigInt?
+  
+  // Metadata
+  uploadedAt        DateTime @default(now())
+  uploadedBy        String   @default("system")
+  replaceStrategy   String?  // "replace_all", "smart_merge", "add_new_only"
+  notes             String?  @db.Text
+  
+  // Change tracking
+  assetsAdded       Int      @default(0)
+  assetsUpdated     Int      @default(0)
+  assetsRemoved     Int      @default(0)
+  
+  @@index([sessionId])
+  @@index([version])
+  @@index([isCurrent])
 }

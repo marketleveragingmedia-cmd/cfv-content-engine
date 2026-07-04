@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import SessionTabs from './SessionTabs'
+import { ReplacePackageButton } from './ReplacePackageButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,7 +80,8 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               </span>
             </div>
             
-            {/* PDF export button removed - feature not implemented yet */}
+            {/* Replace Package Button */}
+            <ReplacePackageButton sessionId={session.id} sessionName={session.finalTitle || session.workingTitle || session.theme} />
           </div>
           
           {/* Meta Grid */}
