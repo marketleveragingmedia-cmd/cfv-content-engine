@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { getNextAction, calculateAssetReadiness } from '@/lib/next-action-engine'
 import { CopyAllButtons } from './CopyAllButtons'
+import { PackagePreview } from '@/components/PackagePreview'
 
 interface ExecutiveOverviewProps {
   session: any
@@ -35,6 +36,9 @@ export function ExecutiveOverview({ session, setActiveTab }: ExecutiveOverviewPr
 
       {/* Asset Readiness Strip */}
       <AssetReadinessStrip session={session} />
+
+      {/* Package Preview */}
+      <PackagePreview session={session} />
 
       {/* Copy All Buttons */}
       <CopyAllButtons session={session} />

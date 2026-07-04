@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ExecutiveOverview } from './ExecutiveOverview'
 import { EnhancedChecklist } from './EnhancedChecklist'
+import { EditableField } from '@/components/EditableField'
 
 const TABS = [
   { id: 'executive', label: 'Executive Overview', icon: '⚡' },
@@ -120,17 +121,64 @@ export default function SessionTabs({ session }: { session: any }) {
 }
 
 function OverviewTab({ session }: { session: any }) {
+  const movementThemeOptions = [
+    'Foundation',
+    'Awareness',
+    'Participation',
+    'Transformation',
+    'Leadership',
+    'Legacy'
+  ]
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Session Overview</h2>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold mb-4" style={{color: '#1E8E5A'}}>Session Details</h2>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Field label="Session ID" value={session.sessionId} />
         <Field label="Status" value={session.status} />
         <Field label="Theme" value={session.theme} />
         <Field label="Category" value={session.category || 'Not set'} />
         <Field label="Founder Pathway Stage" value={session.founderPathwayStage || 'Not set'} />
         <Field label="Creator" value={session.creator} />
+      </div>
+      
+      {/* Editable Movement Theme */}
+      <div className="pt-4 border-t-2 border-gray-200">
+        <EditableField
+          sessionId={session.id}
+          field="movementTheme"
+          value={session.movementTheme}
+          label="Movement Theme"
+          type="select"
+          options={movementThemeOptions}
+          placeholder="Select movement theme"
+        />
+      </div>
+      
+      {/* Editable Content Type */}
+      <div>
+        <EditableField
+          sessionId={session.id}
+          field="contentType"
+          value={session.contentType}
+          label="Content Type"
+          type="select"
+          options={['Vision Session', 'YouTube Long-Form', 'Podcast Episode', 'Educational Series', 'Workshop', 'Interview']}
+          placeholder="Select content type"
+        />
+      </div>
+      
+      {/* Editable Human Status */}
+      <div>
+        <EditableField
+          sessionId={session.id}
+          field="humanStatus"
+          value={session.humanStatus}
+          label="Human-Facing Status"
+          type="text"
+          placeholder="e.g., Foundation Content in Production"
+        />
       </div>
       
       {session.summary && (

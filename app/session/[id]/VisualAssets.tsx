@@ -1,10 +1,20 @@
+import { PackagePreview } from '@/components/PackagePreview'
+
 export function VisualAssetsTab({ session }: { session: any }) {
   const images = session.assets.filter((a: any) => a.assetType === 'Image')
   
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4" style={{color: 'var(--green-primary)'}}>Visual Assets</h2>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold mb-4" style={{color: 'var(--green-primary)'}}>Visual Assets</h2>
+      </div>
       
+      {/* Package Preview */}
+      <PackagePreview session={session} />
+      
+      {/* Image Gallery */}
+      <div>
+        <h3 className="text-xl font-bold mb-4" style={{color: 'var(--green-primary)'}}>Image Gallery</h3>
       {images.length === 0 ? (
         <div className="text-center py-12" style={{color: 'var(--text-secondary)'}}>
           <p>No visual assets found</p>
@@ -51,6 +61,7 @@ export function VisualAssetsTab({ session }: { session: any }) {
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }

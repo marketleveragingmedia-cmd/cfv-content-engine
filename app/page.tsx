@@ -6,10 +6,49 @@ export const dynamic = 'force-dynamic'
 
 async function getDashboardStats() {
   try {
-    const total = await prisma.visionSession.count()
-    const inProgress = await prisma.visionSession.count({ where: { status: 'in-progress' } })
-    const readyToPublish = await prisma.visionSession.count({ where: { status: 'ready-to-publish' } })
-    const published = await prisma.visionSession.count({ where: { status: 'published' } })
+    // Get all sessions with full data for accurate counting
+    const allSessionsWithData = await prisma.visionSession.findMany({
+      include: {
+        checklistItems: true,
+        assets: true
+      }
+    })
+    
+    // 1. Total Sessions: count ALL imported Vision Sessions
+    const total = allSessionsWithData.length
+    
+    // 2. In Progress: Draft sessions + sessions with incomplete required tasks
+    const inProgress = allSessionsWithData.filter(session => {
+      if (session.status === 'draft') return true
+      if (session.status === 'in-progress') return true
+      
+      // Check if has incomplete required tasks
+      const requiredTasks = session.checklistItems.filter((item: any) => item.required)
+      const incompleteRequired = requiredTasks.filter((item: any) => !item.completed)
+      return incompleteRequired.length > 0
+    }).length
+    
+    // 3. Ready to Publish: all required tasks approved or scheduled
+    const readyToPublish = allSessionsWithData.filter(session => {
+      if (session.status === 'published') return false // exclude already published
+      
+      const requiredTasks = session.checklistItems.filter((item: any) => item.required)
+      if (requiredTasks.length === 0) return false
+      
+      // All required tasks must be approved or scheduled
+      const allRequiredReady = requiredTasks.every((item: any) => 
+        item.status === 'Approved' || item.status === 'Scheduled'
+      )
+      return allRequiredReady
+    }).length
+    
+    // 4. Published: at least one primary channel asset marked Published with live URL
+    const published = allSessionsWithData.filter(session => {
+      const publishedAssets = session.assets.filter((asset: any) => 
+        asset.status === 'Published' && asset.liveUrl
+      )
+      return publishedAssets.length > 0
+    }).length
     
     const recentSessions = await prisma.visionSession.findMany({
       take: 6,
@@ -32,6 +71,7 @@ async function getDashboardStats() {
     
     return { total, inProgress, readyToPublish, published, recentSessions, allSessions }
   } catch (error) {
+    console.error('[getDashboardStats] Error:', error)
     return { total: 0, inProgress: 0, readyToPublish: 0, published: 0, recentSessions: [], allSessions: [] }
   }
 }
