@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatSessionTitle } from '@/lib/format-session-title'
+import DeleteSessionButton from './DeleteSessionButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -145,37 +146,45 @@ export default async function SessionsPage({ searchParams }: { searchParams: any
             {sessions.map((session: any) => {
               const completion = calculateCompletion(session.checklistItems)
               return (
-                <Link 
+                <div 
                   key={session.id} 
-                  href={`/session/${session.id}`} 
-                  className="border rounded-xl p-6 hover:shadow-lg transition cursor-pointer"
+                  className="border rounded-xl p-6 hover:shadow-lg transition"
                   style={{borderColor: 'var(--border-color)'}}
                 >
-                  <div className="font-semibold mb-2" style={{color: 'var(--green-primary)'}}>{session.sessionId}</div>
-                  <h3 className="text-lg font-bold mb-3" style={{color: 'var(--text-primary)'}}>{formatSessionTitle(session)}</h3>
+                  <Link href={`/session/${session.id}`} className="block">
+                    <div className="font-semibold mb-2" style={{color: 'var(--green-primary)'}}>{session.sessionId}</div>
+                    <h3 className="text-lg font-bold mb-3" style={{color: 'var(--text-primary)'}}>{formatSessionTitle(session)}</h3>
+                    
+                    <div className="flex gap-4 text-sm mb-3" style={{color: 'var(--text-secondary)'}}>
+                      <span>📂 {session.category || 'Uncategorized'}</span>
+                      <span>🎯 {session.founderPathwayStage || 'N/A'}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs" style={{color: 'var(--text-secondary)'}}>{session._count.assets} assets</span>
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                        session.status === 'published' ? 'bg-green-100 text-green-700' :
+                        session.status === 'ready-to-publish' ? 'bg-blue-100 text-blue-700' :
+                        session.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-gray-200 text-gray-700'
+                      }`}>
+                        {session.status.replace(/-/g, ' ')}
+                      </span>
+                    </div>
+                    
+                    <div className="bg-gray-200 h-2 rounded-full overflow-hidden mb-2">
+                      <div className="h-full transition-all" style={{ width: `${completion}%`, background: 'var(--green-primary)' }} />
+                    </div>
+                    <div className="text-xs mb-3" style={{color: 'var(--text-secondary)'}}>{completion}% Complete</div>
+                  </Link>
                   
-                  <div className="flex gap-4 text-sm mb-3" style={{color: 'var(--text-secondary)'}}>
-                    <span>📂 {session.category || 'Uncategorized'}</span>
-                    <span>🎯 {session.founderPathwayStage || 'N/A'}</span>
+                  <div className="pt-3 border-t" style={{borderColor: 'var(--border-color)'}}>
+                    <DeleteSessionButton 
+                      sessionId={session.id} 
+                      sessionTitle={formatSessionTitle(session)} 
+                    />
                   </div>
-                  
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-xs" style={{color: 'var(--text-secondary)'}}>{session._count.assets} assets</span>
-                    <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                      session.status === 'published' ? 'bg-green-100 text-green-700' :
-                      session.status === 'ready-to-publish' ? 'bg-blue-100 text-blue-700' :
-                      session.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-gray-200 text-gray-700'
-                    }`}>
-                      {session.status.replace(/-/g, ' ')}
-                    </span>
-                  </div>
-                  
-                  <div className="bg-gray-200 h-2 rounded-full overflow-hidden mb-2">
-                    <div className="h-full transition-all" style={{ width: `${completion}%`, background: 'var(--green-primary)' }} />
-                  </div>
-                  <div className="text-xs" style={{color: 'var(--text-secondary)'}}>{completion}% Complete</div>
-                </Link>
+                </div>
               )
             })}
             </div>
