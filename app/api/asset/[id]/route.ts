@@ -26,8 +26,9 @@ export async function GET(
       const mimeType = asset.mimeType || 'application/octet-stream'
       const filename = asset.title.replace(/[^a-z0-9]/gi, '_') + getExtension(mimeType)
       
-      // Check if filePath is a Blob URL (starts with https://)
+      // Check if filePath is a Blob URL (https://) or data URI (data:)
       const isBlobUrl = asset.filePath.startsWith('https://')
+      const isDataUri = asset.filePath.startsWith('data:')
       
       if (isBlobUrl && mode === 'inline') {
         // For inline mode with blob URLs, redirect directly (most efficient)
@@ -37,7 +38,11 @@ export async function GET(
       // Fetch/read the file
       let fileBuffer: Buffer
       
-      if (isBlobUrl) {
+      if (isDataUri) {
+        // Extract base64 data from data URI
+        const base64Data = asset.filePath.split(',')[1]
+        fileBuffer = Buffer.from(base64Data, 'base64')
+      } else if (isBlobUrl) {
         // Fetch from Vercel Blob
         const response = await fetch(asset.filePath)
         if (!response.ok) {

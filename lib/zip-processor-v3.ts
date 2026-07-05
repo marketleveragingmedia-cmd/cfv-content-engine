@@ -258,11 +258,14 @@ export async function processVisionSessionZipV3(
       }
     }
 
-    // STEP 6: Initialize checklist from template
+    // STEP 6: Initialize checklist and publishing matrix from templates
     if (!existingSession || updateExisting) {
-      // Clear old checklist if updating
+      // Clear old data if updating
       if (existingSession) {
         await prisma.checklistItem.deleteMany({
+          where: { sessionId: visionSession.id }
+        })
+        await prisma.publishingMatrixItem.deleteMany({
           where: { sessionId: visionSession.id }
         })
       }
@@ -282,6 +285,30 @@ export async function processVisionSessionZipV3(
           }
         })
       }
+      
+      // Create publishing matrix (for live URL tracking)
+      const publishingAssets = [
+        { asset: 'YouTube Long-Form', platform: 'YouTube' },
+        { asset: 'YouTube Podcast', platform: 'YouTube' },
+        { asset: 'YouTube Community Post', platform: 'YouTube' },
+        { asset: 'YouTube Short 1', platform: 'YouTube' },
+        { asset: 'YouTube Short 2', platform: 'YouTube' },
+        { asset: 'YouTube Short 3', platform: 'YouTube' },
+        { asset: 'YouTube Short 4', platform: 'YouTube' },
+        { asset: 'YouTube Short 5', platform: 'YouTube' },
+        { asset: 'SKOOL Post', platform: 'SKOOL' },
+        { asset: 'Facebook Post', platform: 'Facebook' },
+        { asset: 'Instagram Post', platform: 'Instagram' }
+      ]
+      
+      await prisma.publishingMatrixItem.createMany({
+        data: publishingAssets.map(item => ({
+          sessionId: visionSession.id,
+          asset: item.asset,
+          platform: item.platform,
+          status: 'Not Scheduled'
+        }))
+      })
     }
 
     // STEP 7: Create import log
