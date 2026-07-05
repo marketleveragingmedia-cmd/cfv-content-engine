@@ -1,0 +1,69 @@
+═══════════════════════════════════════════════════════════════
+  ⚡ FINAL STEP: Enable Vercel Blob Storage (2 minutes)
+═══════════════════════════════════════════════════════════════
+
+The code is deployed, but images won't work until you enable Blob storage.
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 1: Go to Vercel Dashboard                              │
+└─────────────────────────────────────────────────────────────┘
+
+https://vercel.com/dashboard
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 2: Select Your Project                                 │
+└─────────────────────────────────────────────────────────────┘
+
+Click on: cfv-content-engine
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 3: Go to Storage Tab                                   │
+└─────────────────────────────────────────────────────────────┘
+
+At the top navigation: Overview | Deployments | Analytics | Logs | **Storage**
+
+Click **Storage**
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 4: Create Blob Store                                   │
+└─────────────────────────────────────────────────────────────┘
+
+Click "Create Database" or "Connect Store"
+Select "Blob"
+Click "Create"
+
+Name: cfv-images (or whatever you want)
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 5: Done! (Automatic)                                   │
+└─────────────────────────────────────────────────────────────┘
+
+Vercel automatically:
+✓ Creates the blob store
+✓ Adds BLOB_READ_WRITE_TOKEN environment variable
+✓ Connects it to all environments (Production/Preview/Development)
+
+No manual config needed!
+
+═══════════════════════════════════════════════════════════════
+  🎉 AFTER SETUP
+═══════════════════════════════════════════════════════════════
+
+1. Import a new Vision Session ZIP
+2. Images will upload to Blob storage automatically
+3. Images persist forever (no more 404s!)
+4. Check usage: https://vercel.com/[team]/~/observability/blob
+
+FREE TIER INCLUDES:
+- 5 GB storage
+- 100,000 image views/month
+- 10,000 uploads/month
+
+You'll likely never exceed this with normal usage = $0/month
+
+═══════════════════════════════════════════════════════════════
+  ❓ QUESTIONS?
+═══════════════════════════════════════════════════════════════
+
+Full docs: https://vercel.com/docs/storage/vercel-blob
+Support: Your Vercel dashboard > Help
