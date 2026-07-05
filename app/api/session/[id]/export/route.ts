@@ -179,9 +179,31 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       included_assets: includedAssets.sort(),
       missing_assets: missingAssets.length > 0 ? missingAssets : ['None - All assets included successfully'],
       required_assets_check: REQUIRED_ASSETS.map(req => {
-        const found = includedAssets.some(asset => 
-          asset.toLowerCase().includes(req.toLowerCase().replace(/ /g, '-'))
-        )
+        let found = false
+        
+        // Special handling for specific asset types
+        if (req === 'NotebookLM Source') {
+          found = includedAssets.some(asset => 
+            asset.toLowerCase().includes('notebooklm') && asset.toLowerCase().includes('source')
+          )
+        } else if (req === 'NotebookLM Generation Instructions') {
+          found = includedAssets.some(asset => 
+            asset.toLowerCase().includes('notebooklm') && 
+            (asset.toLowerCase().includes('instruction') || asset.toLowerCase().includes('generation'))
+          )
+        } else {
+          // General pattern matching
+          const searchTerms = [
+            req.toLowerCase().replace(/ /g, '-'),
+            req.toLowerCase().replace(/ /g, '_'),
+            req.toLowerCase()
+          ]
+          found = includedAssets.some(asset => {
+            const assetLower = asset.toLowerCase()
+            return searchTerms.some(term => assetLower.includes(term))
+          })
+        }
+        
         return { asset: req, status: found ? 'INCLUDED' : 'MISSING' }
       }),
       warnings: missingAssets.length > 0 

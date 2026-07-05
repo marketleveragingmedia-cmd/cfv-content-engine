@@ -30,21 +30,31 @@ async function getSession(id: string) {
   
   // Strip large content from assets to avoid Next.js serialization limits
   // Keep metadata for display, full data available server-side for export
-  const assetsForClient = session.assets.map((asset: any) => ({
-    id: asset.id,
-    title: asset.title,
-    assetType: asset.assetType,
-    fileName: asset.fileName,
-    mimeType: asset.mimeType,
-    importDestination: asset.importDestination,
-    isPrimaryAsset: asset.isPrimaryAsset,
-    isExportCopy: asset.isExportCopy,
-    countInPrimaryAssetReadiness: asset.countInPrimaryAssetReadiness,
-    approved: asset.approved,
-    version: asset.version,
-    // Exclude large content and filePath (base64 images can be 100KB+)
-    // These are fetched via API when needed for View/Download
-  }))
+  const assetsForClient = session.assets.map((asset: any) => {
+    const isVisual = asset.mimeType?.startsWith('image/') || asset.importDestination === 'Visual Assets'
+    
+    return {
+      id: asset.id,
+      title: asset.title,
+      assetType: asset.assetType,
+      fileName: asset.fileName,
+      mimeType: asset.mimeType,
+      importDestination: asset.importDestination,
+      isPrimaryAsset: asset.isPrimaryAsset,
+      isExportCopy: asset.isExportCopy,
+      countInPrimaryAssetReadiness: asset.countInPrimaryAssetReadiness,
+      approved: asset.approved,
+      version: asset.version,
+      // For visual assets, keep filePath for display (blob URLs are small)
+      // For text assets, exclude content (can be large)
+      // Base64 images: convert to API endpoint URL instead
+      filePath: isVisual ? (
+        asset.filePath?.startsWith('data:') 
+          ? `/api/asset/${asset.id}?mode=inline` 
+          : asset.filePath
+      ) : null,
+    }
+  })
   
   return {
     ...session,
