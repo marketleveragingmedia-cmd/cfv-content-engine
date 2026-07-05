@@ -54,7 +54,7 @@ export async function GET(
       
       // For inline mode (used in img src), return raw image
       if (mode === 'inline' && mimeType.startsWith('image/')) {
-        return new NextResponse(fileBuffer, {
+        return new NextResponse(fileBuffer.buffer as ArrayBuffer, {
           headers: {
             'Content-Type': mimeType,
             'Cache-Control': 'public, max-age=31536000, immutable',
@@ -212,7 +212,7 @@ export async function GET(
       }
       
       // Direct file download
-      return new NextResponse(fileBuffer, {
+      return new NextResponse(fileBuffer.buffer as ArrayBuffer, {
         headers: {
           'Content-Type': mimeType,
           'Content-Disposition': `${mode === 'download' ? 'attachment' : 'inline'}; filename="${filename}"`,
