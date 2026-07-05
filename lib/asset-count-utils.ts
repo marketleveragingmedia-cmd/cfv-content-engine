@@ -16,6 +16,8 @@ interface Asset {
   filePath?: string | null
   fileName?: string | null
   assetType?: string
+  mimeType?: string | null
+  importDestination?: string | null
 }
 
 export interface AssetCounts {
@@ -43,10 +45,19 @@ export function calculateAssetCounts(assets: Asset[]): AssetCounts {
       continue
     }
 
-    // Determine if visual or text based on file extension
-    const fileName = asset.fileName || asset.filePath || ''
-    const ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase()
-    const isVisual = VISUAL_EXTENSIONS.includes(ext)
+    // Determine if visual or text
+    // Priority: 1) mimeType, 2) importDestination, 3) file extension
+    let isVisual = false
+    
+    if (asset.mimeType) {
+      isVisual = asset.mimeType.startsWith('image/')
+    } else if (asset.importDestination === 'Visual Assets') {
+      isVisual = true
+    } else {
+      const fileName = asset.fileName || asset.filePath || ''
+      const ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase()
+      isVisual = VISUAL_EXTENSIONS.includes(ext)
+    }
 
     if (isVisual) {
       primaryVisualAssets++
