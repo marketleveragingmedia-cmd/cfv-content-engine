@@ -29,6 +29,12 @@ export async function GET(
       // Check if filePath is a Blob URL (starts with https://)
       const isBlobUrl = asset.filePath.startsWith('https://')
       
+      if (isBlobUrl && mode === 'inline') {
+        // For inline mode with blob URLs, redirect directly (most efficient)
+        return NextResponse.redirect(asset.filePath)
+      }
+      
+      // Fetch/read the file
       let fileBuffer: Buffer
       
       if (isBlobUrl) {
