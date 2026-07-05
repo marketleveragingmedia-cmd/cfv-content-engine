@@ -213,7 +213,7 @@ export async function processVisionSessionZipV3(
           // For text files: extract content and store in database
           const fileBuffer = zipEntry.getData()
           content = fileBuffer.toString('utf8')
-          storagePath = fileEntry.path // Keep path reference for tracking
+          storagePath = '' // Don't set filePath for text - content is in database
         }
 
         // Create asset record
@@ -223,7 +223,7 @@ export async function processVisionSessionZipV3(
             assetType: fileEntry.asset_type,
             title: fileEntry.title,
             version: String(fileEntry.version),
-            filePath: storagePath,
+            filePath: storagePath || null,
             fileName: fileEntry.path.split('/').pop() || fileEntry.path,
             fileSize: Number(zipEntry.header.size || 0),
             importDestination: fileEntry.import_destination,
