@@ -1,7 +1,10 @@
 import { PackagePreview } from '@/components/PackagePreview'
 
 export function VisualAssetsTab({ session }: { session: any }) {
-  const images = session.assets.filter((a: any) => a.assetType === 'image')
+  // v3: Filter by importDestination OR legacy assetType
+  const images = session.assets.filter((a: any) => 
+    a.importDestination === 'Visual Assets' || a.assetType === 'image'
+  )
   
   return (
     <div className="space-y-6">

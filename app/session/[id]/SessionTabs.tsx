@@ -216,7 +216,10 @@ function OverviewTab({ session }: { session: any }) {
 }
 
 function AssetTab({ session, tab }: { session: any; tab: string }) {
-  const assets = session.assets.filter((a: any) => a.tab === tab)
+  // v3: Use importDestination (new) or tab (legacy) for filtering
+  const assets = session.assets.filter((a: any) => 
+    a.importDestination === tab || a.tab === tab
+  )
   
   return (
     <div>
