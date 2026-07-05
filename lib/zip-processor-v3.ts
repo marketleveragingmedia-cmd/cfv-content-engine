@@ -142,6 +142,9 @@ export async function processVisionSessionZipV3(
       status: 'draft',
       summary: '',
       packageVersion: manifest.package_version || '1.0',
+      originalZipFilename: zipFilename,
+      originalZipPath: zipPath,
+      lastImportedAt: new Date(),
       updatedAt: new Date()
     }
 
