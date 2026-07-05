@@ -188,15 +188,25 @@ export async function processVisionSessionZipV3(
         let storagePath: string
         if (isVisual) {
           // Upload to Vercel Blob for persistent storage
-          const fileBuffer = zipEntry.getData()
-          const blobFilename = `${sessionId}/${fileEntry.path.split('/').pop()}`
-          
-          const blob = await put(blobFilename, fileBuffer, {
-            access: 'public',
-            contentType: `image/${ext.replace('.', '')}`
-          })
-          
-          storagePath = blob.url
+          try {
+            const fileBuffer = zipEntry.getData()
+            const blobFilename = `${sessionId}/${fileEntry.path.split('/').pop()}`
+            
+            const blob = await put(blobFilename, fileBuffer, {
+              access: 'public',
+              contentType: `image/${ext.replace('.', '')}`
+            })
+            
+            storagePath = blob.url
+            console.log(`[ZIP v3] Uploaded to blob: ${blobFilename} -> ${blob.url}`)
+          } catch (blobError: any) {
+            // Fallback: store in database as base64 if blob fails
+            result.warnings.push(`Blob upload failed for ${fileEntry.path}: ${blobError.message}. Using base64 fallback.`)
+            const fileBuffer = zipEntry.getData()
+            const base64 = fileBuffer.toString('base64')
+            storagePath = `data:image/${ext.replace('.', '')};base64,${base64}`
+            console.warn(`[ZIP v3] Blob failed, using base64 for: ${fileEntry.path}`)
+          }
         } else {
           // Store path reference (text files retrieved from ZIP)
           storagePath = fileEntry.path

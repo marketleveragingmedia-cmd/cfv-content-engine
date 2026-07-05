@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ExecutiveOverview } from './ExecutiveOverview'
 import { EnhancedChecklist } from './EnhancedChecklist'
 import { EditableField } from '@/components/EditableField'
@@ -27,6 +27,23 @@ const TABS = [
 export default function SessionTabs({ session }: { session: any }) {
   const [activeTab, setActiveTab] = useState('executive')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  
+  // Restore active tab from URL hash or localStorage on mount
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '')
+    const savedTab = localStorage.getItem('cfv-active-tab')
+    const initialTab = hash || savedTab || 'executive'
+    
+    if (TABS.find(t => t.id === initialTab)) {
+      setActiveTab(initialTab)
+    }
+  }, [])
+  
+  // Save active tab to URL hash and localStorage when it changes
+  useEffect(() => {
+    window.location.hash = activeTab
+    localStorage.setItem('cfv-active-tab', activeTab)
+  }, [activeTab])
   
   const activeTabData = TABS.find(t => t.id === activeTab)
   
