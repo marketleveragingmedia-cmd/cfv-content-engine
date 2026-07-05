@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { getNextAction, calculateAssetReadiness } from '@/lib/next-action-engine'
 import { CopyAllButtons } from './CopyAllButtons'
 import { PackagePreview } from '@/components/PackagePreview'
+import { calculateAssetCounts } from '@/lib/asset-count-utils'
 
 interface ExecutiveOverviewProps {
   session: any
@@ -60,6 +61,7 @@ export function ExecutiveOverview({ session, setActiveTab }: ExecutiveOverviewPr
 
           {/* Right Column */}
           <div className="space-y-4">
+            <AssetCountsField assets={session.assets || []} />
             <SummaryField label="Founder Pathway Stage" value={session.founderPathwayStage || 'Not set'} />
             <SummaryField label="Status" value={session.humanStatus || session.status} badge />
             <SummaryField 
@@ -248,6 +250,28 @@ function ReadinessIndicator({ label, status, color, tooltip }: { label: string; 
     <div className={`${colors.bg} border-2 ${colors.border} rounded-lg p-3`}>
       <div className="text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">{label}</div>
       <div className={`text-sm font-semibold ${colors.text}`}>{status}</div>
+    </div>
+  )
+}
+
+function AssetCountsField({ assets }: { assets: any[] }) {
+  const counts = calculateAssetCounts(assets)
+  
+  return (
+    <div>
+      <label className="block text-sm font-bold mb-1 uppercase tracking-wide text-gray-700">
+        Assets
+      </label>
+      <div className="text-lg font-bold text-gray-900">
+        <span className="text-green-700">{counts.primaryTextAssets}</span> Text •{' '}
+        <span className="text-green-700">{counts.primaryVisualAssets}</span> Visual •{' '}
+        <span className="text-gray-600">{counts.primaryAssetsTotal}</span> Primary
+      </div>
+      {counts.exportCopies > 0 && (
+        <p className="text-xs text-gray-500 mt-1">
+          {counts.exportCopies} export copies (not counted in primary)
+        </p>
+      )}
     </div>
   )
 }

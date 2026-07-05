@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { processVisionSessionZip } from '@/lib/zip-processor'
+import { processVisionSessionZipV3 } from '@/lib/zip-processor-v3'
 import fs from 'fs'
 import path from 'path'
 
@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
     const tempPath = path.join(tempDir, file.name)
     fs.writeFileSync(tempPath, buffer)
     
-    // Process the ZIP (with update mode if requested)
-    const result = await processVisionSessionZip(tempPath, file.name, updateExisting)
+    // Process the ZIP using v3 manifest-driven processor
+    const result = await processVisionSessionZipV3(tempPath, file.name, updateExisting)
     
     // Clean up temp file
     fs.unlinkSync(tempPath)

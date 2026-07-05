@@ -66,18 +66,27 @@ model Asset {
   session           VisionSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   
   // Asset identification
-  tab               String   // Overview, Transcript, Core Message, etc.
+  tab               String?   // Overview, Transcript, Core Message, etc. (legacy)
   assetType         String   // clean_transcript, youtube_long_form, image, etc.
   title             String
   filename          String?
+  fileName          String?  // New field for consistency
   
   // Content
   content           String?  @db.Text
-  filePath          String?  // For files
+  filePath          String?  // For files / blob URLs
   mimeType          String?
+  fileSize          Int?     // File size in bytes
+  
+  // Manifest-driven classification (v3.0)
+  importDestination String?  // Executive Overview, Transcript, Visual Assets, etc.
+  isPrimaryAsset    Boolean  @default(true)
+  isExportCopy      Boolean  @default(false)
+  countInPrimaryAssetReadiness Boolean @default(true)
+  sha256            String?  // File hash for integrity
   
   // Version control
-  version           Int      @default(1)
+  version           String   @default("1")  // Changed to String for "1.0" style versions
   approved          Boolean  @default(false)
   approvedAt        DateTime?
   approvedBy        String?
@@ -92,6 +101,8 @@ model Asset {
   
   @@index([sessionId, tab])
   @@index([sessionId, assetType])
+  @@index([sessionId, isPrimaryAsset])
+  @@index([sessionId, isExportCopy])
 }
 
 // Checklist Item - Interactive publishing checklist
