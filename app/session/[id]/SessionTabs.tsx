@@ -267,7 +267,27 @@ function AssetCard({ asset }: { asset: any }) {
 
 function NotebookLMTab({ session }: { session: any }) {
   const source = session.assets.find((a: any) => a.assetType === 'notebooklm_source')
-  const instructions = session.assets.find((a: any) => a.assetType === 'notebooklm_instructions')
+  const instructions = session.assets.find((a: any) => a.assetType === 'notebooklm_generation_instructions' || a.assetType === 'notebooklm_instructions')
+  
+  const handleView = (assetId: string) => {
+    window.open(`/api/asset/${assetId}?mode=view`, '_blank')
+  }
+  
+  const handleCopy = (asset: any) => {
+    if (asset.content) {
+      navigator.clipboard.writeText(asset.content)
+      alert('Copied to clipboard!')
+    }
+  }
+  
+  const handleDownload = (assetId: string, title: string) => {
+    const link = document.createElement('a')
+    link.href = `/api/asset/${assetId}?mode=download`
+    link.download = `${title.replace(/[^a-z0-9]/gi, '_')}.md`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
   
   return (
     <div className="space-y-6">
@@ -278,9 +298,9 @@ function NotebookLMTab({ session }: { session: any }) {
         <p className="text-sm text-gray-900 font-semibold mb-3">Clean source document for upload</p>
         {source ? (
           <div className="flex gap-2">
-            <button className="px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-sm transition">View</button>
-            <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">Copy</button>
-            <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">Download</button>
+            <button onClick={() => handleView(source.id)} className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-sm transition font-semibold">👁️ View</button>
+            <button onClick={() => handleCopy(source)} className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition font-semibold">📋 Copy</button>
+            <button onClick={() => handleDownload(source.id, source.title)} className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition font-semibold">💾 Download</button>
           </div>
         ) : (
           <p className="text-gray-700 text-sm">No source document available</p>
@@ -292,9 +312,9 @@ function NotebookLMTab({ session }: { session: any }) {
         <p className="text-sm text-gray-900 font-semibold mb-3">Instructions for NotebookLM output</p>
         {instructions ? (
           <div className="flex gap-2">
-            <button className="px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-sm transition">View</button>
-            <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">Copy</button>
-            <button className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition">Download</button>
+            <button onClick={() => handleView(instructions.id)} className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-sm transition font-semibold">👁️ View</button>
+            <button onClick={() => handleCopy(instructions)} className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition font-semibold">📋 Copy</button>
+            <button onClick={() => handleDownload(instructions.id, instructions.title)} className="px-3 py-1 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 rounded text-sm transition font-semibold">💾 Download</button>
           </div>
         ) : (
           <p className="text-gray-700 text-sm">No instructions available</p>
@@ -305,14 +325,13 @@ function NotebookLMTab({ session }: { session: any }) {
 }
 
 function VisualAssetsTab({ session }: { session: any }) {
-  // Try multiple possible image filters
+  // v3: Filter by importDestination (new) OR legacy filters
   const images = session.assets.filter((a: any) => 
+    a.importDestination === 'Visual Assets' ||
     a.assetType === 'Image' || 
     a.assetType === 'image' ||
     a.mimeType?.startsWith('image/') ||
-    a.tab === 'Visual Assets' ||
-    a.title?.toLowerCase().includes('thumbnail') ||
-    a.title?.toLowerCase().includes('image')
+    a.tab === 'Visual Assets'
   )
   
   const handleView = (imageId: string) => {
