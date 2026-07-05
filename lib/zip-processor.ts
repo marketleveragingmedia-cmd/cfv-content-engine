@@ -4,6 +4,7 @@ import { defaultChecklistTemplate } from './checklist-template'
 import { mkdir, writeFile, readFile } from 'fs/promises'
 import { join, extname, basename, dirname } from 'path'
 import { existsSync } from 'fs'
+import { put } from '@vercel/blob'
 
 interface ManifestData {
   // CamelCase fields (old format)
@@ -168,13 +169,6 @@ export async function processVisionSessionZip(
     
     result.sessionDatabaseId = session.id
 
-    // Create storage directory (use /tmp for Vercel serverless)
-    const baseStorageDir = process.env.VERCEL ? '/tmp/cfv-storage' : join(process.cwd(), 'storage')
-    const storageDir = join(baseStorageDir, sessionId)
-    if (!existsSync(storageDir)) {
-      await mkdir(storageDir, { recursive: true })
-    }
-
     // Process each file
     for (const entry of zipEntries) {
       if (entry.isDirectory) continue
@@ -198,10 +192,6 @@ export async function processVisionSessionZip(
       const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'].includes(ext)
       const isText = ['.md', '.txt', '.json'].includes(ext)
 
-      // Save to storage
-      const storagePath = join(storageDir, fileName)
-      await writeFile(storagePath, fileData)
-
       // Determine asset type
       let assetType = 'file'
       if (fileName.includes('Transcript')) assetType = 'transcript'
@@ -209,6 +199,27 @@ export async function processVisionSessionZip(
       else if (fileName.includes('NotebookLM') && fileName.includes('Source')) assetType = 'notebooklm_source'
       else if (fileName.includes('NotebookLM') && fileName.includes('Instructions')) assetType = 'notebooklm_instructions'
       else if (isImage) assetType = 'image'
+
+      // Handle images - upload to Vercel Blob
+      let filePath = null
+      let blobUrl = null
+      
+      if (isImage) {
+        try {
+          // Upload to Vercel Blob with pathname for organization
+          const blob = await put(`${sessionId}/${fileName}`, fileData, {
+            access: 'public',
+            contentType: getMimeType(ext)
+          })
+          blobUrl = blob.url
+          filePath = blob.url // Store blob URL in filePath for backwards compatibility
+        } catch (error: any) {
+          console.error(`Failed to upload ${fileName} to Vercel Blob:`, error)
+          result.errors.push(`Image upload failed: ${fileName} - ${error.message}`)
+          // Skip this asset if blob upload fails
+          continue
+        }
+      }
 
       // Read content if text
       let content = null
@@ -223,7 +234,7 @@ export async function processVisionSessionZip(
           tab,
           title: fileName.replace(/_/g, ' ').replace(/\.[^.]+$/, ''),
           content,
-          filePath: storagePath,
+          filePath: filePath || null, // Blob URL for images, null for text
           mimeType: getMimeType(ext),
           version: 1,
           approved: false,

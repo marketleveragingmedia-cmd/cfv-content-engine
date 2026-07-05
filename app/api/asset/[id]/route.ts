@@ -21,11 +21,30 @@ export async function GET(
       return NextResponse.json({ error: 'Asset not found' }, { status: 404 })
     }
     
-    // Handle file-based assets (images, PDFs, etc.)
-    if (asset.filePath && existsSync(asset.filePath)) {
-      const fileBuffer = await readFile(asset.filePath)
+    // Handle file-based assets (images from Vercel Blob or legacy filesystem)
+    if (asset.filePath) {
       const mimeType = asset.mimeType || 'application/octet-stream'
       const filename = asset.title.replace(/[^a-z0-9]/gi, '_') + getExtension(mimeType)
+      
+      // Check if filePath is a Blob URL (starts with https://)
+      const isBlobUrl = asset.filePath.startsWith('https://')
+      
+      let fileBuffer: Buffer
+      
+      if (isBlobUrl) {
+        // Fetch from Vercel Blob
+        const response = await fetch(asset.filePath)
+        if (!response.ok) {
+          return NextResponse.json({ error: 'Failed to fetch blob' }, { status: 500 })
+        }
+        const arrayBuffer = await response.arrayBuffer()
+        fileBuffer = Buffer.from(arrayBuffer)
+      } else if (existsSync(asset.filePath)) {
+        // Legacy: read from filesystem
+        fileBuffer = await readFile(asset.filePath)
+      } else {
+        return NextResponse.json({ error: 'File not found' }, { status: 404 })
+      }
       
       // For inline mode (used in img src), return raw image
       if (mode === 'inline' && mimeType.startsWith('image/')) {
