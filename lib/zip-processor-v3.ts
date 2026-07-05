@@ -281,7 +281,26 @@ export async function processVisionSessionZipV3(
       }
     }
 
-    // STEP 7: Log import success
+    // STEP 7: Create import log
+    await prisma.importLog.create({
+      data: {
+        sessionId: visionSession.id,
+        importType: existingSession ? 'update_session' : 'new_session',
+        zipFilename: zipFilename,
+        zipPath: zipPath,
+        manifestFound: true,
+        manifestData: JSON.stringify(manifest),
+        assetsImported: result.assetsImported,
+        assetsMissing: 0,
+        assetsUnclassified: 0,
+        errors: result.errors.length > 0 ? JSON.stringify(result.errors) : null,
+        warnings: result.warnings.length > 0 ? JSON.stringify(result.warnings) : null,
+        importedAt: new Date(),
+        importedBy: 'system'
+      }
+    })
+
+    // STEP 8: Log import success
     console.log(`[ZIP Processor v3] Import complete:`, {
       sessionId: result.sessionId,
       displayTitle: result.displayTitle,
