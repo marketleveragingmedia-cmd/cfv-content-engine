@@ -28,8 +28,27 @@ async function getSession(id: string) {
   const requiredCompletion = requiredTotal > 0 ? Math.round((requiredCompleted / requiredTotal) * 100) : 0
   const overallCompletion = allTotal > 0 ? Math.round((allCompleted / allTotal) * 100) : 0
   
+  // Strip large content from assets to avoid Next.js serialization limits
+  // Keep metadata for display, full data available server-side for export
+  const assetsForClient = session.assets.map((asset: any) => ({
+    id: asset.id,
+    title: asset.title,
+    assetType: asset.assetType,
+    fileName: asset.fileName,
+    mimeType: asset.mimeType,
+    importDestination: asset.importDestination,
+    isPrimaryAsset: asset.isPrimaryAsset,
+    isExportCopy: asset.isExportCopy,
+    countInPrimaryAssetReadiness: asset.countInPrimaryAssetReadiness,
+    approved: asset.approved,
+    version: asset.version,
+    // Exclude large content and filePath (base64 images can be 100KB+)
+    // These are fetched via API when needed for View/Download
+  }))
+  
   return {
     ...session,
+    assets: assetsForClient,
     requiredCompletion,
     overallCompletion,
     completion: {
