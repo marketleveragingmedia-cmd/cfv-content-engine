@@ -11,6 +11,22 @@ export function PackagePreview({ session }: PackagePreviewProps) {
   const assets = session.assets || []
   const counts = calculateAssetCounts(assets)
   
+  // Debug logging
+  if (typeof window !== 'undefined' && counts.primaryTextAssets === 0 && counts.primaryVisualAssets === 0 && assets.length > 0) {
+    console.log('[PackagePreview] Asset count debug:', {
+      totalAssets: assets.length,
+      counts,
+      sampleAsset: assets[0] ? {
+        importDestination: assets[0].importDestination,
+        mimeType: assets[0].mimeType,
+        fileName: assets[0].fileName,
+        isPrimaryAsset: assets[0].isPrimaryAsset,
+        isExportCopy: assets[0].isExportCopy,
+        countInPrimaryAssetReadiness: assets[0].countInPrimaryAssetReadiness
+      } : null
+    })
+  }
+  
   const textAssets = counts.primaryTextAssets
   const visualAssets = counts.primaryVisualAssets
   const exportCopies = counts.exportCopies

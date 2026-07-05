@@ -7,8 +7,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params
     
-    // Query by database ID, not sessionId
-    const session = await prisma.visionSession.findUnique({
+    // Query by database ID OR sessionId for flexibility
+    let session = await prisma.visionSession.findUnique({
       where: { id },
       include: {
         assets: { orderBy: { importDestination: 'asc' } },
@@ -17,6 +17,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         imports: { orderBy: { importedAt: 'desc' }, take: 1 }
       }
     })
+    
+    // If not found by database ID, try sessionId (for backward compatibility)
+    if (!session) {
+      session = await prisma.visionSession.findUnique({
+        where: { sessionId: id },
+        include: {
+          assets: { orderBy: { importDestination: 'asc' } },
+          checklistItems: { orderBy: { orderIndex: 'asc' } },
+          publishingMatrix: { orderBy: { createdAt: 'asc' } },
+          imports: { orderBy: { importedAt: 'desc' }, take: 1 }
+        }
+      })
+    }
     
     if (!session) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })

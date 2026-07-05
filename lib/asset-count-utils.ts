@@ -46,17 +46,27 @@ export function calculateAssetCounts(assets: Asset[]): AssetCounts {
     }
 
     // Determine if visual or text
-    // Priority: 1) mimeType, 2) importDestination, 3) file extension
+    // Priority: 1) importDestination, 2) mimeType, 3) file extension
     let isVisual = false
     
-    if (asset.mimeType) {
-      isVisual = asset.mimeType.startsWith('image/')
-    } else if (asset.importDestination === 'Visual Assets') {
+    // Check importDestination first (most reliable for v3 imports)
+    if (asset.importDestination === 'Visual Assets') {
       isVisual = true
-    } else {
+    } 
+    // Then check mimeType
+    else if (asset.mimeType && asset.mimeType.startsWith('image/')) {
+      isVisual = true
+    }
+    // Finally fallback to file extension
+    else {
       const fileName = asset.fileName || asset.filePath || ''
-      const ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase()
-      isVisual = VISUAL_EXTENSIONS.includes(ext)
+      if (fileName) {
+        const lastDot = fileName.lastIndexOf('.')
+        if (lastDot > 0) {
+          const ext = fileName.substring(lastDot).toLowerCase()
+          isVisual = VISUAL_EXTENSIONS.includes(ext)
+        }
+      }
     }
 
     if (isVisual) {
