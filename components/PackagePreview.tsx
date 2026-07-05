@@ -1,18 +1,19 @@
 'use client'
 
+import { calculateAssetCounts } from '@/lib/asset-count-utils'
+
 interface PackagePreviewProps {
   session: any
 }
 
 export function PackagePreview({ session }: PackagePreviewProps) {
-  // Count assets by type
+  // Count assets using v3 asset counting logic
   const assets = session.assets || []
-  const visualAssets = assets.filter((a: any) => a.assetType === 'Image').length
-  const textAssets = assets.filter((a: any) => 
-    a.assetType === 'Transcript' || 
-    a.assetType === 'YouTube Description' ||
-    a.assetType === 'Short'
-  ).length
+  const counts = calculateAssetCounts(assets)
+  
+  const textAssets = counts.primaryTextAssets
+  const visualAssets = counts.primaryVisualAssets
+  const exportCopies = counts.exportCopies
   
   // Get completion percentage
   const completion = session.overallCompletion || session.completion?.overall || 0
@@ -74,6 +75,9 @@ export function PackagePreview({ session }: PackagePreviewProps) {
           <div className="text-2xl md:text-3xl mb-1">📝</div>
           <div className="text-xl md:text-2xl font-bold" style={{ color: '#1E8E5A' }}>{textAssets}</div>
           <div className="text-xs text-gray-600">Text Assets</div>
+          {exportCopies > 0 && (
+            <div className="text-xs text-gray-400 mt-1">+{exportCopies} exports</div>
+          )}
         </div>
         <div className="bg-white rounded-lg p-3 md:p-4 border-2" style={{ borderColor: '#e5e7eb' }}>
           <div className="text-2xl md:text-3xl mb-1">🖼️</div>
