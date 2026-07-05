@@ -236,7 +236,7 @@ export async function processVisionSessionZip(
           content,
           filePath: filePath || null, // Blob URL for images, null for text
           mimeType: getMimeType(ext),
-          version: 1,
+          version: '1',
           approved: false,
           assetType
         }

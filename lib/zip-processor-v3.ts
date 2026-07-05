@@ -208,10 +208,10 @@ export async function processVisionSessionZipV3(
             sessionId: visionSession.id,
             assetType: fileEntry.asset_type,
             title: fileEntry.title,
-            version: fileEntry.version.toString(),
+            version: String(fileEntry.version),
             filePath: storagePath,
             fileName: fileEntry.path.split('/').pop() || fileEntry.path,
-            fileSize: zipEntry.header.size || 0,
+            fileSize: Number(zipEntry.header.size || 0),
             importDestination: fileEntry.import_destination,
             isPrimaryAsset: fileEntry.is_primary_asset,
             isExportCopy: fileEntry.is_export_copy,
@@ -253,13 +253,13 @@ export async function processVisionSessionZipV3(
         await prisma.checklistItem.create({
           data: {
             sessionId: visionSession.id,
-            taskName: item.taskName,
-            taskType: item.taskType,
             category: item.category,
-            requiredFor: item.requiredFor,
-            displayOrder: item.displayOrder,
-            completed: false,
-            skipped: false
+            title: item.title,
+            required: item.required,
+            orderIndex: item.orderIndex,
+            conditional: (item as any).conditional || false,
+            status: 'Not Started',
+            completed: false
           }
         })
       }
