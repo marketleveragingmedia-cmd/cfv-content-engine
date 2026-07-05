@@ -28,7 +28,7 @@ export function ExecutiveOverview({ session, setActiveTab }: ExecutiveOverviewPr
           <QuickActionButton onClick={() => switchTab('notebooklm')} label="Open NotebookLM Source" icon="📚" />
           <QuickActionButton onClick={() => switchTab('visual-assets')} label="View Visual Assets" icon="🖼️" />
           <QuickActionButton onClick={() => switchTab('checklist')} label="Update Checklist" icon="✅" />
-          <QuickActionButton href={`/api/session/${session.sessionId}/export`} label="Export ZIP" icon="💾" external />
+          <QuickActionButton href={`/api/session/${session.id}/export`} label="Export ZIP" icon="💾" external />
         </div>
       </div>
 

@@ -450,7 +450,7 @@ function LinksTab({ session }: { session: any }) {
           <h3 className="font-bold mb-3 text-base md:text-lg">Export Session</h3>
           <p className="text-sm text-gray-700 mb-3">Download all assets as a complete package</p>
           <Link 
-            href={`/api/session/${session.sessionId}/export`}
+            href={`/api/session/${session.id}/export`}
             className="block text-center md:inline-block px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold transition"
           >
             💾 Download Complete Package
