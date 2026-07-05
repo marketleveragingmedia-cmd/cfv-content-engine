@@ -184,8 +184,10 @@ export async function processVisionSessionZipV3(
         const ext = fileEntry.path.substring(fileEntry.path.lastIndexOf('.')).toLowerCase()
         const isVisual = VISUAL_EXTENSIONS.includes(ext)
 
-        // Determine storage location
+        // Extract content for text files, upload for images
         let storagePath: string
+        let content: string | null = null
+        
         if (isVisual) {
           // Upload to Vercel Blob for persistent storage
           try {
@@ -208,8 +210,10 @@ export async function processVisionSessionZipV3(
             console.warn(`[ZIP v3] Blob failed, using base64 for: ${fileEntry.path}`)
           }
         } else {
-          // Store path reference (text files retrieved from ZIP)
-          storagePath = fileEntry.path
+          // For text files: extract content and store in database
+          const fileBuffer = zipEntry.getData()
+          content = fileBuffer.toString('utf8')
+          storagePath = fileEntry.path // Keep path reference for tracking
         }
 
         // Create asset record
@@ -227,6 +231,8 @@ export async function processVisionSessionZipV3(
             isExportCopy: fileEntry.is_export_copy,
             countInPrimaryAssetReadiness: fileEntry.count_in_primary_asset_readiness,
             sha256: fileEntry.sha256 || '',
+            content: content, // Store full text content for easy access
+            mimeType: isVisual ? `image/${ext.replace('.', '')}` : 'text/plain',
             createdAt: new Date()
           }
         })
