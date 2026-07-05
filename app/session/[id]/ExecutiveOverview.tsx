@@ -55,7 +55,7 @@ export function ExecutiveOverview({ session, setActiveTab }: ExecutiveOverviewPr
             <SummaryField label="Title" value={session.finalTitle || session.workingTitle || session.theme} />
             <SummaryField label="Theme" value={session.theme} />
             <SummaryField label="Primary Category" value={session.category || 'Not set'} />
-            <SummaryField label="Movement Theme" value={session.movementTheme || 'Not set'} />
+            <SummaryField label="Movement Theme" value={session.theme || 'Not set'} />
             <SummaryField label="Content Type" value={session.contentType || 'Vision Session'} />
           </div>
 
