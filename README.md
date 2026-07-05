@@ -1,173 +1,108 @@
-# Cash Flow Visionaries Content Engine
+# 🎬 Cash Flow Visionaries Content Engine
 
-**Version:** 1.0  
-**Created:** July 2, 2026  
-**Purpose:** Vision Session management, content production, and publishing workflow
+Vision Session management, content production, and publishing workflow automation.
 
 ---
 
-## Features Implemented
+## 🌐 Production
 
-### ✅ Core System
-- **Vision Session Records** with unique CFV-VS-##### IDs
-- **15 Standard Tabs** per session
-- **ZIP Package Import** with original preservation
-- **Database Storage** (PostgreSQL + Prisma)
+**Live URL:** [cfv-content-engine.vercel.app](https://cfv-content-engine.vercel.app)
 
-### ✅ Content Management
-- **Overview Tab** - Session metadata
-- **Transcript Tab** - Clean transcripts
-- **Core Message Tab** - Session essence
-- **YouTube Long-Form Tab** - Full video package
-- **Shorts Tab** - Short-form content
-- **YouTube Community Tab** - Community posts
-- **YouTube Podcast Tab** - Podcast episodes
-- **HeyGen Tab** - Avatar scripts
-- **SKOOL Tab** - Community content
-- **Founder Pathway Tab** - Founder positioning
-
-### ✅ Publishing Workflow
-- **Interactive Publishing Checklist** (58 default items across 11 categories)
-- **Publishing Matrix** tracking (YouTube, SKOOL, Facebook, Instagram)
-- **Progress Tracking** (Required vs. Overall completion)
-- **Status Management** (Draft → In Progress → Ready to Publish → Published)
-
-### ✅ Special Features
-- **NotebookLM Tab** - Separate source & generation instructions
-- **Visual Assets Tab** - Image management
-- **Links & Versions Tab** - Original ZIP + publishing links
-- **Import/Audit Log** - Full import history
+**Status:** 🟢 All Systems Operational
 
 ---
 
-## Installation & Deployment
+## 📚 Documentation
 
-### Prerequisites
-- Node.js 20+
-- PostgreSQL database
-- Vercel account (for deployment)
-
-### Local Setup
-
-1. **Install dependencies:**
-```bash
-npm install
-```
-
-2. **Configure database:**
-Edit `.env` and set your `DATABASE_URL`:
-```
-DATABASE_URL="postgresql://user:password@host:5432/cfv_content_engine"
-```
-
-3. **Run migrations:**
-```bash
-npx prisma migrate deploy
-npx prisma generate
-```
-
-4. **Start development server:**
-```bash
-npm run dev
-```
-
-Access at: http://localhost:3000
+- **[QUICK-START.md](./QUICK-START.md)** - Common tasks and quick reference
+- **[PROJECT-OVERVIEW.md](./PROJECT-OVERVIEW.md)** - Complete technical documentation
+- **[SETUP-BLOB-STORAGE.txt](./SETUP-BLOB-STORAGE.txt)** - Vercel Blob setup guide
 
 ---
 
-## Vercel Deployment
+## ✨ Features
 
-### Step 1: Create Vercel Project
-```bash
-vercel
-```
-
-### Step 2: Add Database
-In Vercel dashboard:
-1. Go to Storage → Create Database → Postgres
-2. Copy `DATABASE_URL` to environment variables
-
-### Step 3: Deploy
-```bash
-vercel --prod
-```
+- 📥 **Import** Vision Session ZIP packages
+- 🔄 **Replace** existing sessions with updated content
+- 🖼️ **Visual Assets** with persistent cloud storage (Vercel Blob)
+- ✅ **Checklists** for progress tracking
+- 📊 **Publishing Matrix** for multi-platform management
+- 💾 **Export** complete session packages
+- 📱 **Responsive** mobile-friendly interface
 
 ---
 
-## First Import
+## 🚀 Quick Start
 
-1. Navigate to **Import Package** tab
-2. Upload your CFV Vision Session ZIP file
-3. System will:
-   - Preserve original ZIP
-   - Generate unique session ID (CFV-VS-00001)
-   - Create default 58-item checklist
-   - Initialize publishing matrix
-   - Create import log
+### Import a Session:
+1. Go to [/import](https://cfv-content-engine.vercel.app/import)
+2. Upload ZIP package
+3. View imported session
 
-4. View session in Dashboard or All Sessions
+### View All Sessions:
+[Dashboard](https://cfv-content-engine.vercel.app) | [All Sessions](https://cfv-content-engine.vercel.app/sessions)
 
 ---
 
-## Usage
+## 🛠️ Tech Stack
 
-### Dashboard
-- View stats (Total, In Progress, Ready to Publish, Published)
-- See recent sessions
-- Quick access to any session
-
-### Import Package
-- Drag & drop ZIP files
-- Automatic processing
-- Import status & results
-
-### Session Detail View
-- 15 tabs for complete content management
-- Interactive checklist
-- Publishing matrix tracking
-- Asset view/copy/download
+- **Framework:** Next.js 16.2.10 (App Router + Turbopack)
+- **Database:** PostgreSQL (Vercel Postgres)
+- **Storage:** Vercel Blob (persistent images)
+- **Hosting:** Vercel
+- **ORM:** Prisma 5.22.0
 
 ---
 
-## File Structure
+## 📦 Project Structure
 
 ```
 cfv-content-engine/
-├── app/
-│   ├── page.tsx                    # Dashboard
-│   ├── import/page.tsx             # Import interface
-│   ├── sessions/page.tsx           # All sessions list
-│   ├── session/[id]/
-│   │   ├── page.tsx                # Session detail
-│   │   └── SessionTabs.tsx         # 15-tab interface
-│   └── api/
-│       └── import/route.ts         # ZIP import API
-├── lib/
-│   ├── prisma.ts                   # Database client
-│   └── checklist-template.ts      # Default 58-item checklist
-├── prisma/
-│   └── schema.prisma               # Database schema
-├── uploads/                        # Original ZIPs (preserved)
-└── package.json
+├── app/              # Next.js App Router pages & API
+├── lib/              # Business logic & utilities
+├── prisma/           # Database schema
+├── components/       # Shared React components
+└── public/           # Static assets
 ```
 
 ---
 
-## Integration with MLM Command Center
+## 💾 Data Storage
 
-Add this link to your MLM Command Center navigation:
+- **Database:** PostgreSQL (session metadata, checklists, publishing status)
+- **Images:** Vercel Blob (persistent cloud storage, CDN-delivered)
+- **Cost:** Free tier (5GB storage, 100K operations/month)
 
-```html
-<a href="https://cfv-content-engine.vercel.app" target="_blank">
-  🎬 CFV Content Engine
-</a>
+---
+
+## 🔧 Maintenance
+
+**Check system health:**
+```bash
+curl https://cfv-content-engine.vercel.app/api/sessions
+```
+
+**Deploy updates:**
+```bash
+npx vercel deploy --prod --yes
 ```
 
 ---
 
-## Support
+## 📊 Current Status
 
-For issues or questions, check:
-- Implementation handoff docs (in `/content-engine-temp/`)
-- Database schema (`prisma/schema.prisma`)
-- Default checklist (`lib/checklist-template.ts`)
+- **Sessions:** 1 active
+- **Images:** Persistent storage operational
+- **Deployments:** Auto-deploy enabled
+- **Last Updated:** July 5, 2026
+
+---
+
+## 📞 Support
+
+- **Vercel Dashboard:** [Project Settings](https://vercel.com/marketleveragingmedia-cmds-projects/cfv-content-engine)
+- **Documentation:** See `PROJECT-OVERVIEW.md` for complete details
+
+---
+
+Built with ❤️ for Cash Flow Visionaries
