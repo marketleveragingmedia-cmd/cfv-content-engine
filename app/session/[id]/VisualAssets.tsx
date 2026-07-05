@@ -24,12 +24,20 @@ export function VisualAssetsTab({ session }: { session: any }) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {images.map((image: any) => (
             <div key={image.id} className="bg-white border border-gray-200 rounded-lg p-3">
-              {image.filepath ? (
+              {image.filePath ? (
                 <a href={`/api/asset/${image.id}?mode=view`} target="_blank" rel="noopener noreferrer">
                   <img 
-                    src={image.filepath} 
+                    src={`/api/asset/${image.id}?mode=inline`}
                     alt={image.title}
                     className="aspect-video w-full object-cover rounded mb-2 hover:opacity-90 transition"
+                    onError={(e) => {
+                      // Fallback if image fails to load
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      const parent = (e.target as HTMLElement).parentElement;
+                      if (parent) {
+                        parent.innerHTML = '<div class="aspect-video bg-gray-100 rounded mb-2 flex items-center justify-center"><span class="text-4xl">🖼️</span></div>';
+                      }
+                    }}
                   />
                 </a>
               ) : (

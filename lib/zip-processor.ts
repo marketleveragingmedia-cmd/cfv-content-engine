@@ -33,6 +33,7 @@ interface ManifestData {
 
 interface ProcessResult {
   sessionId: string
+  sessionDatabaseId: string
   assetsImported: number
   assetsMissing: number
   assetsUnclassified: number
@@ -64,6 +65,7 @@ export async function processVisionSessionZip(
 ): Promise<ProcessResult> {
   const result: ProcessResult = {
     sessionId: '',
+    sessionDatabaseId: '',
     assetsImported: 0,
     assetsMissing: 0,
     assetsUnclassified: 0,
@@ -163,6 +165,8 @@ export async function processVisionSessionZip(
       // Create new session
       session = await prisma.visionSession.create({ data: sessionData })
     }
+    
+    result.sessionDatabaseId = session.id
 
     // Create storage directory (use /tmp for Vercel serverless)
     const baseStorageDir = process.env.VERCEL ? '/tmp/cfv-storage' : join(process.cwd(), 'storage')

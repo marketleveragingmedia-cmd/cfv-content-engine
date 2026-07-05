@@ -27,6 +27,16 @@ export async function GET(
       const mimeType = asset.mimeType || 'application/octet-stream'
       const filename = asset.title.replace(/[^a-z0-9]/gi, '_') + getExtension(mimeType)
       
+      // For inline mode (used in img src), return raw image
+      if (mode === 'inline' && mimeType.startsWith('image/')) {
+        return new NextResponse(fileBuffer, {
+          headers: {
+            'Content-Type': mimeType,
+            'Cache-Control': 'public, max-age=31536000, immutable',
+          },
+        })
+      }
+      
       if (mode === 'view' && mimeType.startsWith('image/')) {
         // For images in view mode, return HTML viewer
         const base64 = fileBuffer.toString('base64')
