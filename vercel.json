@@ -1,9 +1,3 @@
 {
-  "buildCommand": "prisma generate && next build",
-  "framework": "nextjs",
-  "github": {
-    "enabled": true,
-    "autoAlias": true,
-    "silent": false
-  }
+  "buildCommand": "prisma generate && prisma migrate deploy && next build"
 }
