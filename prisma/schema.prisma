@@ -228,3 +228,53 @@ model ZipVersion {
   @@index([version])
   @@index([isCurrent])
 }
+
+// ============================================
+// FOUNDER-BETA SYSTEM
+// ============================================
+
+model FounderBeta {
+  id                    String   @id @default(cuid())
+  
+  // Founder Identity
+  fullName              String
+  preferredName         String?
+  email                 String   @unique
+  phone                 String?
+  
+  // Address
+  addressLine1          String?
+  addressLine2          String?
+  city                  String?
+  stateProvince         String?
+  postalCode            String?
+  country               String?
+  
+  // Preferences
+  preferredContactMethod String? // Email, Phone, etc.
+  
+  // Founder-Beta Level (Server-verified only)
+  founderLevel          String   // "Citizen Founder-Beta" or "Enterprise Founder-Beta"
+  
+  // Payment Information (Verified from Stripe)
+  amountPaid            Int      // Amount in cents
+  currency              String   @default("USD")
+  paymentStatus         String   // "succeeded", "pending", etc.
+  
+  // Stripe Identifiers
+  stripeCustomerId      String?
+  stripeCheckoutSessionId String? @unique
+  stripePaymentIntentId String?
+  
+  // Status Tracking
+  founderIntakeStatus   String   @default("Pending") // Pending, Complete
+  founderOrientationStatus String @default("Not Started") // Not Started, In Progress, Complete
+  
+  // Timestamps
+  transactionDate       DateTime
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([email])
+  @@index([stripeCheckoutSessionId])
+}
